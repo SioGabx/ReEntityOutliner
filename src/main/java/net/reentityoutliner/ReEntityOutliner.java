@@ -85,20 +85,6 @@ public class ReEntityOutliner implements ClientModInitializer {
                 Type setType = new TypeToken<List<List<String>>>(){}.getType();
                 List<List<String>> outlinedEntityNames = GSON.fromJson(config.get("outlinedEntities"), setType);
 
-                /*Map<EntityType<?>, Color> outlinedEntityTypes = outlinedEntityNames.stream()
-                    .collect(Collectors.toMap(list -> EntityType.get(list.getFirst()).get(), list -> Color.valueOf(list.get(1))));
-**/
-                /*
-                Map<EntityType<?>, Color> outlinedEntityTypes = outlinedEntityNames.stream()
-
-                        .collect(Collectors.toMap(
-                                list -> EntityType.get(list.getFirst())
-                                        .orElseThrow(() -> new IllegalArgumentException("Invalid entity type: " + list.getFirst())),
-                                list -> Color.valueOf(list.get(1))
-                        ));
-*/
-
-
                 Map<EntityType<?>, Color> outlinedEntityTypes = outlinedEntityNames.stream()
                         .map(list -> {
                             Optional<EntityType<?>> entityTypeOptional = EntityType.get(list.getFirst());

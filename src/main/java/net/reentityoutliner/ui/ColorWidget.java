@@ -40,7 +40,7 @@ public class ColorWidget extends PressableWidget {
     protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
         MinecraftClient minecraftClient = MinecraftClient.getInstance();
         super.renderWidget(context, mouseX, mouseY, delta);
-        int color = (this.color.red << 16) | (this.color.green << 8) | this.color.blue;
+        int color = (255 << 24) | (this.color.red << 16) | (this.color.green << 8) | this.color.blue;
         this.setMessage(this.color.colorName);
         this.drawMessage(context, minecraftClient.textRenderer, color);
     }

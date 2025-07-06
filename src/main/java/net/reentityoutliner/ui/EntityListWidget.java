@@ -24,30 +24,6 @@ import net.minecraft.util.Language;
 @Environment(EnvType.CLIENT)
 public class EntityListWidget extends ElementListWidget<EntityListWidget.Entry> {
 
-    /*@Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (button == 0) {
-            System.out.println("Category clicked!");
-            Entry focusedEntry = this.getHoveredEntry(); // Récupère l'entrée actuellement sélectionnée
-
-            if (focusedEntry instanceof HeaderEntry) {
-                // Cast l'entrée en HeaderEntry pour accéder à la catégorie
-                HeaderEntry headerEntry = (HeaderEntry) focusedEntry;
-                SpawnGroup clickedSpawnGp = headerEntry.spawnGp;
-
-                for (Map.Entry<String, List<EntityType<?>>> entry : EntitySelector.searcher.entrySet()) {
-                    for (EntityType<?> entityType : entry.getValue()) {
-                        if (clickedSpawnGp == entityType.getSpawnGroup()) {
-                            Color entityColor = Color.of(clickedSpawnGp);
-                            EntitySelector.outlinedEntityTypes.put(entityType, entityColor);
-                        }
-                    }
-                }
-            }
-        }
-        return super.mouseClicked(mouseX, mouseY, button);
-    }
-*/
     public EntityListWidget(MinecraftClient client, int width, int height, int top, int itemHeight) {
         super(client, width, height, top, itemHeight);
         this.centerListVertically = false;
