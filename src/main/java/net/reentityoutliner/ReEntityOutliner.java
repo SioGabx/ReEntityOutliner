@@ -1,23 +1,21 @@
 package net.reentityoutliner;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
-
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.google.gson.JsonElement;
 
 import org.lwjgl.glfw.GLFW;
 
 import net.reentityoutliner.ui.EntitySelector;
 import net.reentityoutliner.ui.ColorWidget.Color;
+import net.reentityoutliner.util.EntityTypesSettings;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -33,21 +31,21 @@ public class ReEntityOutliner implements ClientModInitializer {
     public static boolean outliningEntities;
 
     private static final KeyBinding CONFIG_BIND = new KeyBinding(
-        "key.re-entity-outliner.selector",
-        InputUtil.Type.KEYSYM,
-        GLFW.GLFW_KEY_SEMICOLON,
-        "title.re-entity-outliner.title"
+            "key.re-entity-outliner.selector",
+            InputUtil.Type.KEYSYM,
+            GLFW.GLFW_KEY_SEMICOLON,
+            "title.re-entity-outliner.title"
     );
 
     private static final KeyBinding OUTLINE_BIND = new KeyBinding(
-        "key.re-entity-outliner.outline",
-        InputUtil.Type.KEYSYM,
-        GLFW.GLFW_KEY_O,
-        "title.re-entity-outliner.title"
+            "key.re-entity-outliner.outline",
+            InputUtil.Type.KEYSYM,
+            GLFW.GLFW_KEY_O,
+            "title.re-entity-outliner.title"
     );
 
-	@Override
-	public void onInitializeClient() {
+    @Override
+    public void onInitializeClient() {
         KeyBindingHelper.registerKeyBinding(CONFIG_BIND);
         KeyBindingHelper.registerKeyBinding(OUTLINE_BIND);
 
@@ -64,46 +62,83 @@ public class ReEntityOutliner implements ClientModInitializer {
     public static void saveConfig() {
         JsonObject config = new JsonObject();
 
-        List<List<String>> outlinedEntityNames = EntitySelector.outlinedEntityTypes.entrySet().stream()
-            .map(entry -> List.of(EntityType.getId(entry.getKey()).toString(), entry.getValue().name()))
-            .collect(Collectors.toList());
+        JsonArray outlinedEntitiesArray = new JsonArray();
 
-        config.add("outlinedEntities", GSON.toJsonTree(outlinedEntityNames));
+        for (Map.Entry<EntityType<?>, EntityTypesSettings> entry : EntitySelector.outlinedEntityTypes.entrySet()) {
+            EntityType<?> entityType = entry.getKey();
+            EntityTypesSettings settings = entry.getValue();
+
+            JsonObject entityObj = new JsonObject();
+            entityObj.addProperty("entity", EntityType.getId(entityType).toString());
+
+            JsonObject colorObj = new JsonObject();
+            colorObj.addProperty("name", settings.color.name());
+            colorObj.addProperty("r", settings.color.red);
+            colorObj.addProperty("g", settings.color.green);
+            colorObj.addProperty("b", settings.color.blue);
+            entityObj.add("color", colorObj);
+
+            entityObj.addProperty("outlined", settings.outlined);
+
+            outlinedEntitiesArray.add(entityObj);
+        }
+
+        config.add("outlinedEntities", outlinedEntitiesArray);
 
         try {
             Files.write(getConfigPath(), GSON.toJson(config).getBytes());
-        }
-        catch (IOException ex) {
+        } catch (IOException ex) {
             logException(ex, "Failed to save reentityoutliner config");
         }
     }
 
+
     private void loadConfig() {
-        try {
-            JsonObject config = GSON.fromJson(new String(Files.readAllBytes(getConfigPath())), JsonObject.class);
-            if (config.has("outlinedEntities")) {
-                Type setType = new TypeToken<List<List<String>>>(){}.getType();
-                List<List<String>> outlinedEntityNames = GSON.fromJson(config.get("outlinedEntities"), setType);
 
-                Map<EntityType<?>, Color> outlinedEntityTypes = outlinedEntityNames.stream()
-                        .map(list -> {
-                            Optional<EntityType<?>> entityTypeOptional = EntityType.get(list.getFirst());
-                            if (entityTypeOptional.isEmpty()) {
-                                System.err.printf("[reentityoutliner] Invalid entity type: " + list.getFirst());
-                            }
-                            return entityTypeOptional.map(entityType -> Map.entry(entityType, Color.valueOf(list.get(1))));
-                        })
-                        .filter(Optional::isPresent)
-                        .map(Optional::get)
-                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-
-
-                for (EntityType<?> entityType : Registries.ENTITY_TYPE)
-                    if (outlinedEntityTypes.containsKey(entityType))
-                        EntitySelector.outlinedEntityTypes.put(entityType, outlinedEntityTypes.get(entityType));
-            }
+        for (EntityType<?> entityType : Registries.ENTITY_TYPE) {
+            EntitySelector.outlinedEntityTypes.put(entityType, new EntityTypesSettings(Color.of(entityType.getSpawnGroup()), false));
         }
-        catch (Exception ex) {
+
+        try {
+            // Lecture du fichier en UTF-8 et parsing JSON
+            String jsonString = Files.readString(getConfigPath());
+            JsonObject config = GSON.fromJson(jsonString, JsonObject.class);
+
+            if (config.has("outlinedEntities")) {
+                JsonArray outlinedEntitiesArray = config.getAsJsonArray("outlinedEntities");
+
+                for (JsonElement element : outlinedEntitiesArray) {
+                    if (!element.isJsonObject()) continue;
+
+                    JsonObject entityObj = element.getAsJsonObject();
+
+                    String entityId = entityObj.get("entity").getAsString();
+
+                    Optional<EntityType<?>> entityTypeOptional = EntityType.get(entityId);
+
+                    if (entityTypeOptional.isEmpty()) {
+                        System.err.printf("[reentityoutliner] Invalid entity type: %s%n", entityId);
+                        continue;
+                    }
+
+                    EntityType<?> entityType = entityTypeOptional.get();
+
+                    JsonObject colorObj = entityObj.getAsJsonObject("color");
+                    String colorName = colorObj.has("name") ? colorObj.get("name").getAsString() : "Unknown";
+                    Color color = Color.valueOf(colorName);
+
+                    // Récupérer outlined
+                    boolean outlined = entityObj.has("outlined") && entityObj.get("outlined").getAsBoolean();
+
+                    EntityTypesSettings settings = EntitySelector.outlinedEntityTypes.get(entityType);
+
+                    if (settings != null) {
+                        settings.color = color;
+                        settings.outlined = outlined;
+                    }
+                }
+            }
+        } catch (Exception ex) {
             logException(ex, "Failed to load reentityoutliner config");
         }
     }
@@ -113,7 +148,7 @@ public class ReEntityOutliner implements ClientModInitializer {
             outliningEntities = !outliningEntities;
         }
 
-        if (CONFIG_BIND.isPressed()) {           
+        if (CONFIG_BIND.isPressed()) {
             client.setScreen(new EntitySelector(null));
         }
     }

@@ -1,5 +1,9 @@
 package net.reentityoutliner.ui;
+
+import net.reentityoutliner.util.EntityTypesSettings;
+
 import java.util.Map;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -19,8 +23,10 @@ public class ColorWidget extends PressableWidget {
         super(x, y, width, height, message);
         this.entityType = entityType;
 
-        if (EntitySelector.outlinedEntityTypes.containsKey(this.entityType))
+        EntityTypesSettings settings = EntitySelector.outlinedEntityTypes.get(this.entityType);
+        if (settings != null && settings.outlined) {
             onShow();
+        }
     }
 
     public ColorWidget(int x, int y, int width, int height, EntityType<?> entityType) {
@@ -28,12 +34,22 @@ public class ColorWidget extends PressableWidget {
     }
 
     public void onShow() {
-        this.color = EntitySelector.outlinedEntityTypes.get(this.entityType);
+        this.color = EntitySelector.outlinedEntityTypes.get(this.entityType).color;
     }
 
     public void onPress() {
+        onPress(0);
+    }
+
+    public void onPress(int button) {
         this.color = this.color.next();
-        EntitySelector.outlinedEntityTypes.put(this.entityType, this.color);
+        if (button == 1) {
+            this.color = Color.of(entityType.getSpawnGroup());
+        }
+        EntityTypesSettings settings = EntitySelector.outlinedEntityTypes.get(this.entityType);
+        if (settings != null) {
+            settings.color = this.color;
+        }
     }
 
     @Override
@@ -44,9 +60,6 @@ public class ColorWidget extends PressableWidget {
         this.setMessage(this.color.colorName);
         this.drawMessage(context, minecraftClient.textRenderer, color);
     }
-
-
-
 
 
     public enum Color {
@@ -67,14 +80,14 @@ public class ColorWidget extends PressableWidget {
         public final Text colorName;
 
         private static final Map<SpawnGroup, Color> spawnGroupColors = Map.of(
-            SpawnGroup.AMBIENT, Color.PURPLE,
-            SpawnGroup.AXOLOTLS, Color.PINK,
-            SpawnGroup.CREATURE, Color.YELLOW,
-            SpawnGroup.MISC, Color.WHITE,
-            SpawnGroup.MONSTER, Color.RED,
-            SpawnGroup.UNDERGROUND_WATER_CREATURE, Color.ORANGE,
-            SpawnGroup.WATER_AMBIENT, Color.GREEN,
-            SpawnGroup.WATER_CREATURE, Color.BLUE
+                SpawnGroup.AMBIENT, Color.PURPLE,
+                SpawnGroup.AXOLOTLS, Color.PINK,
+                SpawnGroup.CREATURE, Color.YELLOW,
+                SpawnGroup.MISC, Color.WHITE,
+                SpawnGroup.MONSTER, Color.RED,
+                SpawnGroup.UNDERGROUND_WATER_CREATURE, Color.ORANGE,
+                SpawnGroup.WATER_AMBIENT, Color.GREEN,
+                SpawnGroup.WATER_CREATURE, Color.BLUE
         );
 
         private static final Color[] colors = Color.values();
@@ -100,5 +113,6 @@ public class ColorWidget extends PressableWidget {
     }
 
     @Override
-    protected void appendClickableNarrations(NarrationMessageBuilder builder) {}
+    protected void appendClickableNarrations(NarrationMessageBuilder builder) {
+    }
 }

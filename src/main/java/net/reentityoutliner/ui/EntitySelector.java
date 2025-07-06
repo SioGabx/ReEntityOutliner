@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import net.reentityoutliner.ReEntityOutliner;
-import net.reentityoutliner.ui.ColorWidget.Color;
+import net.reentityoutliner.util.EntityTypesSettings;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -25,7 +25,7 @@ public class EntitySelector extends Screen {
     public static boolean groupByCategory = true;
     private static String searchText = "";
     public static HashMap<String, List<EntityType<?>>> searcher; // Prefix -> arr of results
-    public static HashMap<EntityType<?>, Color> outlinedEntityTypes = new HashMap<>();
+    public static final HashMap<EntityType<?>, EntityTypesSettings> outlinedEntityTypes = new HashMap<>();
 
     public EntitySelector(Screen parent) {
         super(Text.translatable("title.re-entity-outliner.selector"));
@@ -74,12 +74,16 @@ public class EntitySelector extends Screen {
                             if (searcher.containsKey(text)) {
                                 List<EntityType<?>> results = searcher.get(text);
                                 for (EntityType<?> entityType : results) {
-                                    outlinedEntityTypes.remove(entityType);
+                                    EntityTypesSettings settings = EntitySelector.outlinedEntityTypes.get(entityType);
+                                    if (settings != null) {
+                                        settings.outlined = false;
+                                    }
                                 }
                             }
 
-                            //outlinedEntityTypes.clear();
+                            double previousScroll = list.getScrollY();
                             this.onSearchFieldUpdate(this.searchField.getText());
+                            list.setScrollY(previousScroll);
                         }
                 ).size(buttonWidth, buttonHeight).position(buttonInterval + (buttonWidth + buttonInterval), buttonY).build()
         );
@@ -93,14 +97,15 @@ public class EntitySelector extends Screen {
                             if (searcher.containsKey(text)) {
                                 List<EntityType<?>> results = searcher.get(text);
                                 for (EntityType<?> entityType : results) {
-                                    if (!outlinedEntityTypes.containsKey(entityType)) {
-                                        Color entityColor = Color.of(entityType.getSpawnGroup());
-                                        outlinedEntityTypes.put(entityType, entityColor);
-
+                                    EntityTypesSettings settings = EntitySelector.outlinedEntityTypes.get(entityType);
+                                    if (settings != null) {
+                                        settings.outlined = true;
                                     }
                                 }
                             }
+                            double previousScroll = list.getScrollY();
                             this.onSearchFieldUpdate(this.searchField.getText());
+                            list.setScrollY(previousScroll);
                         }
                 ).size(buttonWidth, buttonHeight).position(buttonInterval + (buttonWidth + buttonInterval) * 2, buttonY).build()
         );
@@ -232,7 +237,9 @@ public class EntitySelector extends Screen {
         }
 
         // This prevents an overscroll when the user is already scrolled down and the results list is shortened
-        list.setScrollY(list.getMaxScrollY());
+        if (list.getMaxScrollY() < list.getScrollY()){
+            list.setScrollY(list.getMaxScrollY());
+        }
     }
 
     // Called when config screen is escaped

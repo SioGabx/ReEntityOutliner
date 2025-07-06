@@ -2,6 +2,7 @@ package net.reentityoutliner.mixin;
 
 import net.reentityoutliner.ReEntityOutliner;
 import net.reentityoutliner.ui.EntitySelector;
+import net.reentityoutliner.util.EntityTypesSettings;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import org.spongepowered.asm.mixin.Mixin;
@@ -13,10 +14,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class MixinMinecraftClient {
     @Inject(method = "hasOutline", at = @At("HEAD"), cancellable = true)
     private void outlineEntities(Entity entity, CallbackInfoReturnable<Boolean> ci) {
-        if (ReEntityOutliner.outliningEntities && EntitySelector.outlinedEntityTypes != null) {
-            if (EntitySelector.outlinedEntityTypes.containsKey(entity.getType())) {
+        if (ReEntityOutliner.outliningEntities) {
+            EntityTypesSettings settings = EntitySelector.outlinedEntityTypes.get(entity.getType());
+            if (settings != null && settings.outlined) {
                 ci.setReturnValue(true);
-           }
+            }
         }
-   }
+    }
 }

@@ -3,9 +3,9 @@ package net.reentityoutliner.ui;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.reentityoutliner.util.EntityTypesSettings;
 import org.apache.commons.lang3.StringUtils;
 
-import net.reentityoutliner.ui.ColorWidget.Color;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -63,28 +63,28 @@ public class EntityListWidget extends ElementListWidget<EntityListWidget.Entry> 
             this.color = color;
 
             this.children.add(checkbox);
-            if (EntitySelector.outlinedEntityTypes.containsKey(entityType))
+            EntityTypesSettings settings = EntitySelector.outlinedEntityTypes.get(entityType);
+            if (settings != null && settings.outlined) {
                 this.children.add(color);
+            }
         }
 
         public static EntityListWidget.EntityEntry create(EntityType<?> entityType, int width) {
+            EntityTypesSettings settings = EntitySelector.outlinedEntityTypes.get(entityType);
 
             return new EntityListWidget.EntityEntry(
                     CheckboxWidget
                             .builder(entityType.getName(), MinecraftClient.getInstance().textRenderer)
                             .pos(width / 2 - 155, 0)
-                            .checked(EntitySelector.outlinedEntityTypes.containsKey(entityType)).build(),
+                            .checked(settings != null && settings.outlined).build(),
                     new ColorWidget(width / 2 + 75, 0, 75, 20, entityType),
                     entityType
             );
         }
-        //new CheckboxWidget(width / 2 - 155, 0,  entityType.getName(), textRender, EntitySelector.outlinedEntityTypes.containsKey(entityType), null),
-
 
         public void render(DrawContext context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
             this.checkbox.setY(y);
             this.checkbox.render(context, mouseX, mouseY, tickDelta);
-
             if (this.children.contains(this.color)) {
                 this.color.setY(y);
                 this.color.render(context, mouseX, mouseY, tickDelta);
@@ -92,18 +92,20 @@ public class EntityListWidget extends ElementListWidget<EntityListWidget.Entry> 
         }
 
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
-            if (EntitySelector.outlinedEntityTypes.containsKey(entityType)) {
-                if (this.color.isMouseOver(mouseX, mouseY)) {
-                    this.color.onPress();
-                } else {
-                    EntitySelector.outlinedEntityTypes.remove(entityType);
 
+            EntityTypesSettings settings = EntitySelector.outlinedEntityTypes.get(this.entityType);
+            if (settings != null && settings.outlined) {
+                if (this.color.isMouseOver(mouseX, mouseY)) {
+                    this.color.onPress(button);
+                } else {
+                    settings.outlined = false;
                     this.checkbox.onPress();
                     this.children.remove(this.color);
                 }
             } else {
-                EntitySelector.outlinedEntityTypes.put(entityType, Color.of(entityType.getSpawnGroup()));
-
+                if (settings != null) {
+                    settings.outlined = true;
+                }
                 this.color.onShow();
                 this.checkbox.onPress();
                 this.children.add(this.color);
