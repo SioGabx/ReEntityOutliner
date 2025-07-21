@@ -17,6 +17,9 @@
     "entrypoints": {
         "main": [
           "net.reentityoutliner.ReEntityOutliner"
+        ],
+        "modmenu": [
+            "net.reentityoutliner.config.ModMenuIntegration"
         ]
     },
     "mixins": [

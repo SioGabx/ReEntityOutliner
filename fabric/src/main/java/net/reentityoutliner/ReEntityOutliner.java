@@ -1,7 +1,7 @@
 package net.reentityoutliner;
 
 import net.fabricmc.api.ModInitializer;
-import net.reentityoutliner.settings.ConfigLoader;
+import net.reentityoutliner.config.ConfigManager;
 
 public class ReEntityOutliner implements ModInitializer {
     
@@ -14,6 +14,6 @@ public class ReEntityOutliner implements ModInitializer {
 
         // Use Fabric to bootstrap the Common mod.
         Constants.LOG.info("Hello Fabric world!");
-        ConfigLoader.load();
+        ConfigManager.load();
     }
 }

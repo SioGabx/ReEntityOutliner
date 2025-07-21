@@ -1,6 +1,4 @@
-package net.reentityoutliner.common;
-
-import java.awt.*;
+package net.reentityoutliner.util;
 
 public class EntityTypesProperties {
     public MobCategoryColor color;

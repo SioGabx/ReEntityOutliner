@@ -1,4 +1,4 @@
-package net.reentityoutliner.common;
+package net.reentityoutliner.util;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;

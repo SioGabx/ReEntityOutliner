@@ -1,14 +1,14 @@
-package net.reentityoutliner.settings;
+package net.reentityoutliner.config;
 
 import net.reentityoutliner.Constants;
-import net.reentityoutliner.common.EntityTypesProperties;
-import net.reentityoutliner.common.Registries;
-import net.reentityoutliner.common.MobCategoryColor;
+import net.reentityoutliner.util.EntityTypesProperties;
+import net.reentityoutliner.util.Registries;
+import net.reentityoutliner.util.MobCategoryColor;
 import net.minecraft.world.entity.EntityType;
 
 import java.util.HashMap;
 
-public class ConfigLoader {
+public class ConfigManager {
     public static final HashMap<EntityType<?>, EntityTypesProperties> outlinedEntityTypes = new HashMap<>();
     public static String getReadableName(EntityType<?> type) {
         return type.getDescription().getString();
