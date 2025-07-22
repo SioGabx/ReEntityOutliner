@@ -4,16 +4,16 @@
     "version": "${version}",
     "name": "${mod_name}",
     "description": "${description}",
-    "authors": [
-        "${mod_author}"
-    ],
+    "authors": ["${mod_author}"    ],
+    "contributors": [ "${credits}"],
     "contact": {
-        "homepage": "https://fabricmc.net/",
-        "sources": "https://github.com/FabricMC/fabric-example-mod"
+        "homepage": "${homepage}",
+        "issues": "${issues_page}",
+        "sources": "${sources}"
     },
     "license": "${license}",
-    "icon": "${mod_id}.png",
-    "environment": "*",
+    "icon": "assets/reentityoutliner/icon.png",
+    "environment": "client",
     "entrypoints": {
         "main": [
           "net.reentityoutliner.ReEntityOutliner"

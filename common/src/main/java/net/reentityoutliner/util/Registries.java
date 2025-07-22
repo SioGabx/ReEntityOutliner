@@ -4,6 +4,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,7 +15,7 @@ public class Registries {
     }
 
     public static List<ResourceLocation> getAllEntityTypeIds() {
-        return BuiltInRegistries.ENTITY_TYPE.keySet().stream().collect(Collectors.toList());
+        return new ArrayList<>(BuiltInRegistries.ENTITY_TYPE.keySet());
     }
 
 

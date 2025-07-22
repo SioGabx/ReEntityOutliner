@@ -1,0 +1,222 @@
+package net.reentityoutliner.config;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Checkbox;
+import net.minecraft.client.gui.components.ContainerObjectSelectionList;
+import net.minecraft.client.gui.components.Renderable;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.narration.NarratableEntry;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
+import net.reentityoutliner.Constants;
+import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static net.reentityoutliner.config.ConfigManager.outlinedEntityTypes;
+
+public class EntityListWidget extends ContainerObjectSelectionList<EntityListWidget.Entry>{
+    public EntityListWidget(Minecraft minecraft, int width, int height, int y, int itemHeight) {
+        super(minecraft, width, height, y, itemHeight);
+        this.centerListVertically = false;
+    }
+    public int getRowWidth() {
+        return 350;
+    }
+    protected int getScrollbarY() {
+        return super.scrollBarY() + 32;
+    }
+    protected int getMaxScroll() {
+        return super.maxScrollAmount();
+    }
+
+    protected double getScrollAmount() {
+        return super.scrollAmount();
+    }
+
+
+
+
+    public void addListEntry(EntityListWidget.Entry entry) {
+        super.addEntry(entry);
+    }
+    public void clearListEntries() {
+        super.clearEntries();
+    }
+
+    //Entry definition
+    public abstract static class Entry extends ContainerObjectSelectionList.Entry<EntityListWidget.Entry> {
+    }
+
+    //Entity entry def
+    public static class EntityEntry extends EntityListWidget.Entry {
+        private final Checkbox checkbox;
+        private final ColorWidget color;
+        private final EntityType<?> entityType;
+        private final List<Renderable> children = new ArrayList<>();
+
+        public EntityEntry(Checkbox checkbox, ColorWidget color, EntityType<?> entityType) {
+            this.checkbox = checkbox;
+            this.entityType = entityType;
+            this.color = color;
+
+            this.children.add(checkbox);
+            var settings = outlinedEntityTypes.get(entityType);
+            if (settings.outlined) {
+                this.children.add(color);
+            }
+        }
+
+        public static EntityListWidget.EntityEntry create(EntityType<?> entityType, int width) {
+            var settings = outlinedEntityTypes.get(entityType);
+
+            return new EntityListWidget.EntityEntry(
+                    Checkbox.builder(Component.translatable(entityType.getDescriptionId()), Minecraft.getInstance().font)
+                            .pos(width / 2 - 155, 0)
+                            .selected(settings != null && settings.outlined).build(),
+                    new ColorWidget(width / 2 + 75, 0, 75, 20,Component.empty(), entityType),
+                    entityType
+            );
+        }
+
+        @Override
+        public void render(@NotNull GuiGraphics graphics, int index, int y, int x, int width, int height, int mouseX, int mouseY, boolean hovered, float delta) {
+            this.checkbox.setY(y);
+            this.checkbox.render(graphics, mouseX, mouseY, delta);
+            if (this.children.contains(this.color)) {
+                this.color.setY(y);
+                this.color.render(graphics, mouseX, mouseY, delta);
+            }
+        }
+
+        @Override
+        public boolean mouseClicked(double mouseX, double mouseY, int button) {
+            var settings = outlinedEntityTypes.get(this.entityType);
+            if (settings != null && settings.outlined) {
+                if (this.color.isMouseOver(mouseX, mouseY)) {
+                    this.color.onPress(button);
+                } else {
+                    settings.outlined = false;
+                    this.checkbox.onPress();
+                    this.children.remove(this.color);
+                }
+            } else {
+                if (settings != null) {
+                    settings.outlined = true;
+                }
+                this.color.onShow();
+                this.checkbox.onPress();
+                this.children.add(this.color);
+            }
+            return true;
+        }
+
+
+        @Override
+        public @NotNull List<? extends NarratableEntry> narratables() {
+            return List.of();
+        }
+
+        @Override
+        public @NotNull List<? extends GuiEventListener> children() {
+            return List.of();
+        }
+    }
+
+
+
+    //HEADER ENTRY
+    public static class HeaderEntry extends EntityListWidget.Entry {
+
+        private final Font font;
+        private final String title;
+        private final int width;
+        private final int height;
+        private final MobCategory spawnGp;
+
+        private HeaderEntry(MobCategory category, Font font, int width, int height) {
+            this.font = font;
+            this.width = width;
+            this.height = height;
+            this.spawnGp = category;
+            if (category != null) {
+                StringBuilder title = new StringBuilder();
+                for (String term : category.getName().split("\\p{Punct}|\\s")) {
+                    title.append(StringUtils.capitalize(term)).append(" ");
+                }
+                this.title = title.toString().trim();
+            } else {
+                this.title = Component.translatable("gui.re-entity-outliner.no_results").getString();
+            }
+        }
+
+        public static EntityListWidget.HeaderEntry create(MobCategory category, Font font, int width, int height) {
+            return new EntityListWidget.HeaderEntry(category, font, width, height);
+        }
+
+        @Override
+        public void render(GuiGraphics graphics, int i, int j, int k, int l, int m, int n, int o, boolean hovered, float delta) {
+            //graphics.fill(k, j, k + l, j + height, 0xFF0000FF); // fond bleu visible
+
+            //Font font = Minecraft.getInstance().font;
+            int textWidth = font.width(title);
+            int textX = k + (l - textWidth) / 2;
+            int textY = j + (m - font.lineHeight) / 2;
+
+            graphics.drawString(
+                    this.font,
+                    this.title,
+                    textX,
+                    textY,
+                    0xFFFFFFFF
+            );
+
+
+
+ }
+
+        @Override
+        public @NotNull List<? extends GuiEventListener> children() {
+            return List.of();
+        }
+
+        @Override
+        public boolean mouseClicked(double mouseX, double mouseY, int button) {
+            if (button == 0) {
+                boolean allAlreadySelected = true;
+                for (int i = 0; i < 2; i++) {
+                    for (EntityListWidget.Entry entry : ConfigScreen.list.children()) {
+                        if (entry instanceof EntityListWidget.EntityEntry entityEntry) {
+                            if (entityEntry.entityType.getCategory() == spawnGp) {
+                                boolean isChecked = entityEntry.checkbox.selected();
+                                if ((!isChecked && i == 0) || (isChecked && i == 1)) {
+                                    allAlreadySelected = false;
+                                    entityEntry.mouseClicked(mouseX, mouseY, button);
+                                }
+                            }
+                        }
+                    }
+                    if (!allAlreadySelected) break;
+                }
+            }
+            return super.mouseClicked(mouseX, mouseY, button);
+        }
+
+        @Override
+        public @NotNull List<? extends NarratableEntry> narratables() {
+            return List.of();
+        }
+
+        @Override
+        public String toString() {
+            return this.title;
+        }
+    }
+
+}
+

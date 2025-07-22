@@ -10,17 +10,22 @@ import java.util.HashMap;
 
 public class ConfigManager {
     public static final HashMap<EntityType<?>, EntityTypesProperties> outlinedEntityTypes = new HashMap<>();
+    public static boolean outliningEntities = false;
     public static String getReadableName(EntityType<?> type) {
         return type.getDescription().getString();
     }
 
-    public static void load(){
-          for (EntityType<?> entityType : Registries.getAllEntityTypes()) {
-              var color = MobCategoryColor.of(entityType.getCategory());
+    public static void load() {
+        for (EntityType<?> entityType : Registries.getAllEntityTypes()) {
+            var color = MobCategoryColor.of(entityType.getCategory());
             outlinedEntityTypes.put(entityType, new EntityTypesProperties(color, false));
-              Constants.LOG.info(getReadableName(entityType));
+            Constants.LOG.info(getReadableName(entityType));
 
-          }
+        }
+    }
+
+    public static void save(){
+
     }
 }
 

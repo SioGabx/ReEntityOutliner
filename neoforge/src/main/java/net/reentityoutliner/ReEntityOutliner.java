@@ -26,7 +26,7 @@ public class ReEntityOutliner {
         ConfigManager.load();
 
         var modContainer = ModList.get().getModContainerById(Constants.MOD_ID).orElseThrow();
-        modContainer.registerExtensionPoint(IConfigScreenFactory.class, (mc, screen) -> new ConfigScreen());
+        modContainer.registerExtensionPoint(IConfigScreenFactory.class, (mc, screen) -> new ConfigScreen(screen));
 
     }
 
