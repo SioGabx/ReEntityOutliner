@@ -10,5 +10,7 @@
     "button.re-entity-outliner.no-categories": "No Categories",
     "button.re-entity-outliner.on": "Toggled On",
     "button.re-entity-outliner.off": "Toggled Off",
-    "gui.re-entity-outliner.no_results": "No results"
+    "gui.re-entity-outliner.no_results": "No results",
+    "gui.re-entity-outliner.outline.now-on": "%s is now on",
+    "gui.re-entity-outliner.outline.now-off": "%s is now off"
 }

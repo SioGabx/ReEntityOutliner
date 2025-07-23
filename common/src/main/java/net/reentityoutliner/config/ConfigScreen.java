@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import static net.reentityoutliner.config.ConfigManager.*;
+import static net.reentityoutliner.config.ConfigManager.isOutliningEntities;
 import static net.reentityoutliner.util.Registries.getAllEntityTypes;
 
 public class ConfigScreen extends Screen {
@@ -107,10 +108,10 @@ public class ConfigScreen extends Screen {
                 .build());
 
         this.addRenderableWidget(Button.builder(
-                        Component.translatable(outliningEntities ? "button.re-entity-outliner.on" : "button.re-entity-outliner.off"),
+                        Component.translatable(isOutliningEntities() ? "button.re-entity-outliner.on" : "button.re-entity-outliner.off"),
                         (button) -> {
-                            outliningEntities = !outliningEntities;
-                            button.setMessage(Component.translatable(outliningEntities ? "button.re-entity-outliner.on" : "button.re-entity-outliner.off"));
+                            setOutliningEntities(!isOutliningEntities());
+                            button.setMessage(Component.translatable(isOutliningEntities() ? "button.re-entity-outliner.on" : "button.re-entity-outliner.off"));
                         })
                 .size(buttonWidth, buttonHeight)
                 .pos(buttonInterval + (buttonWidth + buttonInterval) * 3, buttonY)

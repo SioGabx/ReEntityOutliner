@@ -12,6 +12,7 @@ logoFile="assets/reentityoutliner/icon.png" #optional
 credits="${credits}" #optional
 authors = "${mod_author}" #optional
 description = '''${description}''' #mandatory (Supports multiline text)
+#clientSideOnly=true
 [[mixins]]
 config = "${mod_id}.mixins.json"
 [[mixins]]

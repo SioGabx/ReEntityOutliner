@@ -33,7 +33,7 @@
         "java": ">=${java_version}"
     },
     "suggests": {
-        "another-mod": "*"
+        "modmenu": "*"
     }
 }
   
