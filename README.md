@@ -1,18 +1,10 @@
-Updated to 1.21 and created a NeoForge version !
+NEW : Updated to 1.21 + NeoForge version !
 
-# Availables versions
-CurseForge : https://legacy.curseforge.com/minecraft/mc-mods/re-entity-outliner   \
-<a href="https://legacy.curseforge.com/minecraft/mc-mods/re-entity-outliner"><img alt="CurseForge page" src="https://img.shields.io/curseforge/dt/1079322?logo=curseforge"></a>
-
-Github : https://github.com/SioGabx/EntityOutliner/releases   \
-<a href="https://github.com/SioGabx/EntityOutliner/releases"><img alt="GitHub all releases" src="https://img.shields.io/github/downloads/SioGabx/EntityOutliner/total?color=%2316d68a&logo=github"></a>
-
-# Find community forks from original mod :
-https://github.com/adamviola/EntityOutliner/forks?include=active&page=1&period=2y&sort_by=last_updated
-
-# Entity Outliner
+# Re:Entity Outliner
 Re:Entity Outliner is a clientside mod that allows you to select entity types to outline, making them visible through obstructions at any distance.
 
+<a href="https://legacy.curseforge.com/minecraft/mc-mods/re-entity-outliner"><img alt="CurseForge page" src="https://img.shields.io/curseforge/dt/1079322?logo=curseforge"></a>
+<a href="https://github.com/SioGabx/EntityOutliner/releases"><img alt="GitHub all releases" src="https://img.shields.io/github/downloads/SioGabx/EntityOutliner/total?color=%2316d68a&logo=github"></a>
 
 ## Why Use It?
 This mod will help with:
@@ -92,12 +84,16 @@ Custom keybinds are provided to open the entity selector and toggle the outline.
 
 
 ## Installation
+
+### [On Fabric](https://docs.fabricmc.net/players/installing-mods) : 
 1. Install [Fabric](https://fabricmc.net/use/)
 2. Drop the [Fabric API](https://www.curseforge.com/minecraft/mc-mods/fabric-api) jar into the mods folder
-3. Drop the Entity Outliner jar into the mods folder
+3. Drop the Re:Entity Outliner FABRIC .jar into the mods folder
 
-## Compatibility
-Works with MobZ. Let me know if you find any compatibility issues.
+### On NeoForge :
+1. Install [NeoForge](https://neoforged.net/)
+2. Drop the Re:Entity Outliner NEOFORGE .jar into the mods folder
+
 
 ## License
 MIT. Feel free to use this mod in any modpack.
