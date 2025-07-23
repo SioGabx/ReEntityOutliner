@@ -28,7 +28,7 @@ public class ReEntityOutliner {
         ConfigPath = FMLPaths.CONFIGDIR.get();
         ConfigManager.load();
 
-
+        //Add ConfigScreen screen to config button
         modLoadingContext.registerExtensionPoint(
                 net.minecraftforge.client.ConfigScreenHandler.ConfigScreenFactory.class,
                 () -> new net.minecraftforge.client.ConfigScreenHandler.ConfigScreenFactory((mc, parent) -> new ConfigScreen(parent))
@@ -36,6 +36,7 @@ public class ReEntityOutliner {
 
         BusGroup busGroup = modLoadingContext.getModBusGroup();
         RegisterKeyMappingsEvent.getBus(busGroup).addListener(this::registerKeyBinding);
+
         TickEvent.ClientTickEvent.Pre.BUS.addListener(this::onClientTick);
 
     }

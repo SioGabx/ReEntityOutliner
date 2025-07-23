@@ -31,8 +31,10 @@ public class ReEntityOutliner {
         ConfigPath = FMLPaths.CONFIGDIR.get();
         ConfigManager.load();
 
+        //Add ConfigScreen screen to config button
         var modContainer = ModList.get().getModContainerById(Constants.MOD_ID).orElseThrow();
         modContainer.registerExtensionPoint(IConfigScreenFactory.class, (mc, screen) -> new ConfigScreen(screen));
+
         NeoForge.EVENT_BUS.register(this);
         eventBus.register(ReEntityOutliner.ModBusEvents.class);
     }
