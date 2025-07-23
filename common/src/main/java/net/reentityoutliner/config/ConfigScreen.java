@@ -1,16 +1,15 @@
 package net.reentityoutliner.config;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.reentityoutliner.Constants;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -182,13 +181,13 @@ public class ConfigScreen extends Screen {
 
         List<EntityType<?>> entityTypes = new ArrayList<>(getAllEntityTypes());
         entityTypes.sort(Comparator.comparing(EntityType::getDescriptionId));
-// Add each entity type to everywhere it belongs in the prefix "tree"
+        // Add each entity type to everywhere it belongs in the prefix "tree"
         for (EntityType<?> entityType : entityTypes) {
             String name = entityType.getDescription().getString().toLowerCase();
             allResults.add(entityType);
             List<String> prefixes = new ArrayList<>();
             prefixes.add("");
-// By looping over the name's length, we add to every possible prefix
+            // By looping over the name's length, we add to every possible prefix
             for (int i = 0; i < name.length(); i++) {
                 char character = name.charAt(i);
                 // Loop over every prefix
@@ -218,7 +217,7 @@ public class ConfigScreen extends Screen {
         save();
     }
 
-    public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
+    public void render(@NotNull GuiGraphics context, int mouseX, int mouseY, float delta) {
         super.render(context, mouseX, mouseY, delta);
         list.render(context, mouseX, mouseY, delta);
         this.setFocused(this.searchField);
