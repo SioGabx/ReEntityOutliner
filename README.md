@@ -1,32 +1,103 @@
-# MultiLoader Template
+Updated to 1.21 and created a NeoForge version !
 
-This project provides a Gradle project template that can compile Minecraft mods for multiple modloaders using a common project for the sources. This project does not require any third party libraries or dependencies. If you have any questions or want to discuss the project, please join our [Discord](https://discord.myceliummod.network).
+# Availables versions
+CurseForge : https://legacy.curseforge.com/minecraft/mc-mods/re-entity-outliner   \
+<a href="https://legacy.curseforge.com/minecraft/mc-mods/re-entity-outliner"><img alt="CurseForge page" src="https://img.shields.io/curseforge/dt/1079322?logo=curseforge"></a>
 
-## Getting Started
+Github : https://github.com/SioGabx/EntityOutliner/releases   \
+<a href="https://github.com/SioGabx/EntityOutliner/releases"><img alt="GitHub all releases" src="https://img.shields.io/github/downloads/SioGabx/EntityOutliner/total?color=%2316d68a&logo=github"></a>
 
-### IntelliJ IDEA
-This guide will show how to import the MultiLoader Template into IntelliJ IDEA. The setup process is roughly equivalent to setting up the modloaders independently and should be very familiar to anyone who has worked with their MDKs.
+# Find community forks from original mod :
+https://github.com/adamviola/EntityOutliner/forks?include=active&page=1&period=2y&sort_by=last_updated
 
-1. Clone or download this repository to your computer.
-2. Configure the project by setting the properties in the `gradle.properties` file. You will also need to change the `rootProject.name`  property in `settings.gradle`, this should match the folder name of your project, or else IDEA may complain.
-3. Open the template's root folder as a new project in IDEA. This is the folder that contains this README.md file and the gradlew executable.
-4. If your default JVM/JDK is not Java 21 you will encounter an error when opening the project. This error is fixed by going to `File > Settings > Build, Execution, Deployment > Build Tools > Gradle > Gradle JVM` and changing the value to a valid Java 21 JVM. You will also need to set the Project SDK to Java 21. This can be done by going to `File > Project Structure > Project SDK`. Once both have been set open the Gradle tab in IDEA and click the refresh button to reload the project.
-5. Open your Run/Debug Configurations. Under the `Application` category there should now be options to run Fabric and NeoForge projects. Select one of the client options and try to run it.
-6. Assuming you were able to run the game in step 5 your workspace should now be set up.
+# Entity Outliner
+Re:Entity Outliner is a clientside mod that allows you to select entity types to outline, making them visible through obstructions at any distance.
 
-### Eclipse
-While it is possible to use this template in Eclipse it is not recommended. During the development of this template multiple critical bugs and quirks related to Eclipse were found at nearly every level of the required build tools. While we continue to work with these tools to report and resolve issues support for projects like these are not there yet. For now Eclipse is considered unsupported by this project. The development cycle for build tools is notoriously slow so there are no ETAs available.
 
-## Development Guide
-When using this template the majority of your mod should be developed in the `common` project. The `common` project is compiled against the vanilla game and is used to hold code that is shared between the different loader-specific versions of your mod. The `common` project has no knowledge or access to ModLoader specific code, apis, or concepts. Code that requires something from a specific loader must be done through the project that is specific to that loader, such as the `fabric` or `neoforge` projects.
+## Why Use It?
+This mod will help with:
+<details>
+  <summary>Finding passive mobs</summary>
+  
+  by outlining them.
+  
+  ![Image of outlined bees](https://i.imgur.com/jqhVLSX.png "It's hard to find bees!")
+</details>
 
-Loader specific projects such as the `fabric` and `neoforge` project are used to load the `common` project into the game. These projects also define code that is specific to that loader. Loader specific projects can access all the code in the `common` project. It is important to remember that the `common` project can not access code from loader specific projects.
+<details>
+  <summary>Finding unlit caves</summary>
+  
+  by outlining zombies, creepers, skeletons, and spiders.
+  
+  ![Gif showing how outlining monsters can reveal unlit caves](https://i.imgur.com/owNj5BE.gif "Great for when you've reached a dead end in your cave!")
+  
+  
+</details>
 
-## Removing Platforms and Loaders
-While this template has support for many modloaders, new loaders may appear in the future, and existing loaders may become less relevant.
+<details>
+  <summary>Fighting other players</summary>
+  
+  by outlining players.
+  
+  ![Image of outlined players](https://i.imgur.com/TiEldyM.png "Even works while they're sneaking!")
+  
+</details>
 
-Removing loader specific projects is as easy as deleting the folder, and removing the `include("projectname")` line from the `settings.gradle` file.
-For example if you wanted to remove support for `forge` you would follow the following steps:
+<details>
+  <summary>Finding your death location</summary>
+  
+  by outlining items and experience orbs.
+  
+  
+  ![Image of outlined items/xp orbs of death location](https://i.imgur.com/sOzk89i.png "Tombstone mods are cool too!")
+  
+  
+</details>
 
-1. Delete the subproject folder. For example, delete `MultiLoader-Template/forge`.
-2. Remove the project from `settings.gradle`. For example, remove `include("forge")`. 
+<details>
+  <summary>Wither skeleton skull hunting</summary>
+  
+  by outlining wither skeletons
+  
+  ![Image of outlined wither skeletons](https://i.imgur.com/cc4rhaY.png "I actually like the grind for wither skeleton skulls!")
+  
+</details>
+
+<details>
+  <summary>Finding mineshafts</summary>
+  
+  by outlining cave spiders and minecarts with chests.
+  
+  
+  ![Image of outlined chest minecarts](https://i.imgur.com/36rMnDc.png "I hate cave spiders!")
+  
+</details>
+
+And many more!
+
+## Features
+**Entity Selector**
+
+![GIF demonstrating use of the entity selector screen](https://i.imgur.com/XozyBa4.gif "It's a prefix search!")
+
+This screen allows outlining of any entity in the game. There's a search bar for narrowing down entities and buttons to organize the results by entity category, deselect all entities, and toggle on/off the outlines. Entities added by other mods **do** appear in the results.
+
+For the technically inclined, the search works using a precomputed hashtable that maps a string prefix to a corresponding list of results. The lists of results are computed for all prefixes that correspond at least one entity type.
+
+**Controls for toggling the outlines and opening the selector**
+
+![Image of the keybind selector for toggling the outlines and selector screen](https://i.imgur.com/au39Ov1.png "Hopefully o and p aren't taken!")
+
+Custom keybinds are provided to open the entity selector and toggle the outline. The outline can also be toggled via a button inside the entity selector.
+
+
+## Installation
+1. Install [Fabric](https://fabricmc.net/use/)
+2. Drop the [Fabric API](https://www.curseforge.com/minecraft/mc-mods/fabric-api) jar into the mods folder
+3. Drop the Entity Outliner jar into the mods folder
+
+## Compatibility
+Works with MobZ. Let me know if you find any compatibility issues.
+
+## License
+MIT. Feel free to use this mod in any modpack.
