@@ -1,14 +1,12 @@
 package net.reentityoutliner.config;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EntityType;
 import net.reentityoutliner.util.MobCategoryColor;
-
-import java.util.function.Supplier;
+import org.jetbrains.annotations.NotNull;
 
 import static net.reentityoutliner.config.ConfigManager.outlinedEntityTypes;
 
@@ -51,7 +49,7 @@ public class ColorWidget extends Button {
     }
 
     @Override
-    public void renderWidget(GuiGraphics context, int mouseX, int mouseY, float delta) {
+    public void renderWidget(@NotNull GuiGraphics context, int mouseX, int mouseY, float delta) {
         super.renderWidget(context, mouseX, mouseY, delta);
         int color = (255 << 24) | (this.color.red << 16) | (this.color.green << 8) | this.color.blue;
         this.setMessage(Component.literal(this.color.colorName));

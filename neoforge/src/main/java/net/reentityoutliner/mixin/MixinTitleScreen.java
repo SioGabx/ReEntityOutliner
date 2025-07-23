@@ -1,7 +1,6 @@
 package net.reentityoutliner.mixin;
 
 import net.reentityoutliner.Constants;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.TitleScreen;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
