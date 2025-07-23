@@ -1,4 +1,4 @@
-NEW : Updated to 1.21 + NeoForge version !
+NEW : Updated to 1.21 + NeoForge + Forge version !
 
 # Re:Entity Outliner
 Re:Entity Outliner is a clientside mod that allows you to select entity types to outline, making them visible through obstructions at any distance.
