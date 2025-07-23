@@ -48,4 +48,4 @@ rootProject.name = 'ReEntityOutliner'
 include('common')
 include('fabric')
 include('neoforge')
-//include('forge')
+include('forge')
