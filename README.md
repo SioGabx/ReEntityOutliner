@@ -76,6 +76,9 @@ This screen allows outlining of any entity in the game. There's a search bar for
 
 For the technically inclined, the search works using a precomputed hashtable that maps a string prefix to a corresponding list of results. The lists of results are computed for all prefixes that correspond at least one entity type.
 
+If a Player is on a team, their outline color (if the Player entity is outlined) matches their team color. This
+overrides the selected color for Player entities.
+
 **Controls for toggling the outlines and opening the selector**
 
 ![Image of the keybind selector for toggling the outlines and selector screen](https://i.imgur.com/au39Ov1.png "Hopefully o and p aren't taken!")
