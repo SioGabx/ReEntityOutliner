@@ -1,7 +1,9 @@
-NEW : Updated to 1.21 + NeoForge + Forge version !
+NEW : Updated to 1.21.8 + NeoForge + Forge version !
 
 # Re:Entity Outliner
-Re:Entity Outliner is a clientside mod that allows you to select entity types to outline, making them visible through obstructions at any distance.
+Re:Entity Outliner is a clientside mod that allows you to select entity types to outline, making them visible through obstructions like a entity xray / entity ESP) at any distance (by using a glowing effect).
+
+Re:Entity Outliner is a continuation of adamviola's initial mod : [https://www.curseforge.com/minecraft/mc-mods/entity-outliner](https://www.curseforge.com/minecraft/mc-mods/entity-outliner)
 
 <a href="https://legacy.curseforge.com/minecraft/mc-mods/re-entity-outliner"><img alt="CurseForge page" src="https://img.shields.io/curseforge/dt/1079322?logo=curseforge"></a>
 <a href="https://github.com/SioGabx/EntityOutliner/releases"><img alt="GitHub all releases" src="https://img.shields.io/github/downloads/SioGabx/EntityOutliner/total?color=%2316d68a&logo=github"></a>
@@ -93,9 +95,13 @@ Custom keybinds are provided to open the entity selector and toggle the outline.
 2. Drop the [Fabric API](https://www.curseforge.com/minecraft/mc-mods/fabric-api) jar into the mods folder
 3. Drop the Re:Entity Outliner FABRIC .jar into the mods folder
 
-### On NeoForge :
+### On NeoForge : (from 1.21.8+)
 1. Install [NeoForge](https://neoforged.net/)
 2. Drop the Re:Entity Outliner NEOFORGE .jar into the mods folder
+
+### On Forge : (from 1.21.8+)
+1. Install [NeoForge](https://files.minecraftforge.net/net/minecraftforge/forge/)
+2. Drop the Re:Entity Outliner FORGE .jar into the mods folder
 
 
 ## License
