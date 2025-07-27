@@ -152,7 +152,7 @@ public class ConfigScreen extends Screen {
                 for (MobCategory category : MobCategory.values()) {
                     if (resultsByCategory.containsKey(category)) {
                         if (client!= null)
-                            list.addListEntry(EntityListWidget.HeaderEntry.create(category, client.font, this.width, 25));
+                            list.addListEntry(EntityListWidget.HeaderEntry.create(category, client.font));
                         for (EntityType<?> entityType : resultsByCategory.get(category))
                             list.addListEntry(EntityListWidget.EntityEntry.create(entityType, this.width));
                     }
@@ -163,7 +163,7 @@ public class ConfigScreen extends Screen {
             }
         } else {// If there are no results, let the user know
             if (client != null)
-                list.addListEntry(EntityListWidget.HeaderEntry.create(null, client.font, this.width, 25));
+                list.addListEntry(EntityListWidget.HeaderEntry.create(null, client.font));
         }
 
         if (list.getScrollAmount() > list.getMaxScroll()) {

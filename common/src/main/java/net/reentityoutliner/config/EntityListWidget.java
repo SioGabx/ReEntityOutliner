@@ -11,7 +11,6 @@ import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
-import net.reentityoutliner.Constants;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,9 +26,6 @@ public class EntityListWidget extends ContainerObjectSelectionList<EntityListWid
     }
     public int getRowWidth() {
         return 350;
-    }
-    protected int getScrollbarY() {
-        return super.scrollBarY() + 32;
     }
     protected int getMaxScroll() {
         return super.maxScrollAmount();
@@ -135,14 +131,10 @@ public class EntityListWidget extends ContainerObjectSelectionList<EntityListWid
 
         private final Font font;
         private final String title;
-        private final int width;
-        private final int height;
         private final MobCategory spawnGp;
 
-        private HeaderEntry(MobCategory category, Font font, int width, int height) {
+        private HeaderEntry(MobCategory category, Font font) {
             this.font = font;
-            this.width = width;
-            this.height = height;
             this.spawnGp = category;
             if (category != null) {
                 StringBuilder title = new StringBuilder();
@@ -155,8 +147,8 @@ public class EntityListWidget extends ContainerObjectSelectionList<EntityListWid
             }
         }
 
-        public static EntityListWidget.HeaderEntry create(MobCategory category, Font font, int width, int height) {
-            return new EntityListWidget.HeaderEntry(category, font, width, height);
+        public static EntityListWidget.HeaderEntry create(MobCategory category, Font font) {
+            return new EntityListWidget.HeaderEntry(category, font);
         }
 
         @Override
