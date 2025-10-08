@@ -224,7 +224,8 @@ public class ConfigScreen extends Screen {
         this.searchField.render(context, mouseX, mouseY, delta);
     }
 
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
-        return list.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+    public boolean mouseDragged(net.minecraft.client.input.@NotNull MouseButtonEvent mouseButtonEvent, double dx, double dy) {
+        return list.mouseDragged(mouseButtonEvent, dx, dy);
     }
+
 }

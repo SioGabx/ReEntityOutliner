@@ -8,6 +8,7 @@ import net.minecraft.client.gui.components.ContainerObjectSelectionList;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -49,7 +50,7 @@ public class EntityListWidget extends ContainerObjectSelectionList<EntityListWid
     public abstract static class Entry extends ContainerObjectSelectionList.Entry<EntityListWidget.Entry> {
     }
 
-    //Entity entry def
+    //Entity entry def 1.21.9
     public static class EntityEntry extends EntityListWidget.Entry {
         private final Checkbox checkbox;
         private final ColorWidget color;
@@ -81,24 +82,29 @@ public class EntityListWidget extends ContainerObjectSelectionList<EntityListWid
         }
 
         @Override
-        public void render(@NotNull GuiGraphics graphics, int index, int y, int x, int width, int height, int mouseX, int mouseY, boolean hovered, float delta) {
-            this.checkbox.setY(y);
-            this.checkbox.render(graphics, mouseX, mouseY, delta);
+        public @NotNull List<? extends NarratableEntry> narratables() {
+            return List.of();
+        }
+
+        @Override
+        public void renderContent(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, boolean hovered, float delta) {
+            this.checkbox.setY(this.getContentY());
+            this.checkbox.render(guiGraphics, mouseX, mouseY, delta);
             if (this.children.contains(this.color)) {
-                this.color.setY(y);
-                this.color.render(graphics, mouseX, mouseY, delta);
+                this.color.setY(this.getContentY());
+                this.color.render(guiGraphics, mouseX, mouseY, delta);
             }
         }
 
         @Override
-        public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        public boolean mouseClicked(@NotNull MouseButtonEvent event, boolean doubleClick) {
             var settings = outlinedEntityTypes.get(this.entityType);
             if (settings != null && settings.outlined) {
-                if (this.color.isMouseOver(mouseX, mouseY)) {
-                    this.color.onPress(button);
+                if (this.color.isMouseOver(event.x(), event.y())) {
+                    this.color.onPress(event.button());
                 } else {
                     settings.outlined = false;
-                    this.checkbox.onPress();
+                    this.checkbox.onPress(event.buttonInfo());
                     this.children.remove(this.color);
                 }
             } else {
@@ -106,16 +112,10 @@ public class EntityListWidget extends ContainerObjectSelectionList<EntityListWid
                     settings.outlined = true;
                 }
                 this.color.onShow();
-                this.checkbox.onPress();
+                this.checkbox.onPress(event.buttonInfo());
                 this.children.add(this.color);
             }
             return true;
-        }
-
-
-        @Override
-        public @NotNull List<? extends NarratableEntry> narratables() {
-            return List.of();
         }
 
         @Override
@@ -123,7 +123,6 @@ public class EntityListWidget extends ContainerObjectSelectionList<EntityListWid
             return List.of();
         }
     }
-
 
 
     //HEADER ENTRY
@@ -152,15 +151,18 @@ public class EntityListWidget extends ContainerObjectSelectionList<EntityListWid
         }
 
         @Override
-        public void render(GuiGraphics graphics, int i, int j, int k, int l, int m, int n, int o, boolean hovered, float delta) {
+        public void renderContent(GuiGraphics guiGraphics, int mouseX, int mouseY, boolean hovered, float delta) {
             //graphics.fill(k, j, k + l, j + height, 0xFF0000FF); // fond bleu visible
 
             //Font font = Minecraft.getInstance().font;
             int textWidth = font.width(title);
-            int textX = k + (l - textWidth) / 2;
-            int textY = j + (m - font.lineHeight) / 2;
+            //int textX = this.getContentX() + (guiGraphics.guiWidth() - textWidth) / 2;
+            //int textY = this.getContentY() + (guiGraphics.guiHeight() - font.lineHeight) / 2;
 
-            graphics.drawString(
+            int textX = this.getContentX() + (this.getContentWidth() - textWidth) / 2;
+            int textY = this.getContentY() + (this.getContentHeight() - font.lineHeight) / 2;
+
+            guiGraphics.drawString(
                     this.font,
                     this.title,
                     textX,
@@ -168,9 +170,8 @@ public class EntityListWidget extends ContainerObjectSelectionList<EntityListWid
                     0xFFFFFFFF
             );
 
+        }
 
-
- }
 
         @Override
         public @NotNull List<? extends GuiEventListener> children() {
@@ -178,8 +179,10 @@ public class EntityListWidget extends ContainerObjectSelectionList<EntityListWid
         }
 
         @Override
-        public boolean mouseClicked(double mouseX, double mouseY, int button) {
-            if (button == 0) {
+
+        public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        //public boolean mouseClicked(double mouseX, double mouseY, int button) {
+            if (event.button() == 0) {
                 boolean allAlreadySelected = true;
                 for (int i = 0; i < 2; i++) {
                     for (EntityListWidget.Entry entry : ConfigScreen.list.children()) {
@@ -188,7 +191,7 @@ public class EntityListWidget extends ContainerObjectSelectionList<EntityListWid
                                 boolean isChecked = entityEntry.checkbox.selected();
                                 if ((!isChecked && i == 0) || (isChecked && i == 1)) {
                                     allAlreadySelected = false;
-                                    entityEntry.mouseClicked(mouseX, mouseY, button);
+                                    entityEntry.mouseClicked(event, doubleClick);
                                 }
                             }
                         }
@@ -196,7 +199,7 @@ public class EntityListWidget extends ContainerObjectSelectionList<EntityListWid
                     if (!allAlreadySelected) break;
                 }
             }
-            return super.mouseClicked(mouseX, mouseY, button);
+            return super.mouseClicked(event, doubleClick);
         }
 
         @Override

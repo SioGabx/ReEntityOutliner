@@ -3,30 +3,23 @@ package net.reentityoutliner.config;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.datafixers.kinds.Const;
 import net.minecraft.client.KeyMapping;
-import net.minecraft.client.Minecraft;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
 import net.reentityoutliner.Constants;
 import net.reentityoutliner.util.EntityTypesProperties;
 import net.reentityoutliner.util.Registries;
 import net.reentityoutliner.util.MobCategoryColor;
 import net.minecraft.world.entity.EntityType;
 import org.lwjgl.glfw.GLFW;
-import net.minecraft.*;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 
@@ -52,16 +45,20 @@ public class ConfigManager {
     public static Path ConfigPath = null;
     private static final Gson GSON = new Gson();
 
+
+    private static final KeyMapping.Category KEYBINDING_CATEGORY = KeyMapping.Category.register(ResourceLocation.fromNamespaceAndPath("reentityoutliner", "main"));
+
+
     public static final KeyMapping CONFIG_BIND = new KeyMapping(
             "key.re-entity-outliner.selector",InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_SEMICOLON,
-            "title.re-entity-outliner.title"
+            KEYBINDING_CATEGORY
     );
 
     public static final KeyMapping OUTLINE_BIND = new KeyMapping(
             "key.re-entity-outliner.outline",InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_O,
-            "title.re-entity-outliner.title"
+            KEYBINDING_CATEGORY
     );
 
     private static Path getConfigPath() {
