@@ -46,7 +46,7 @@ public class ConfigManager {
     private static final Gson GSON = new Gson();
 
 
-    private static final KeyMapping.Category KEYBINDING_CATEGORY = KeyMapping.Category.register(ResourceLocation.fromNamespaceAndPath("reentityoutliner", "main"));
+    private static final KeyMapping.Category KEYBINDING_CATEGORY = KeyMapping.Category.register(ResourceLocation.fromNamespaceAndPath("re-entity-outliner", "title"));
 
 
     public static final KeyMapping CONFIG_BIND = new KeyMapping(

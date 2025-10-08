@@ -1,8 +1,8 @@
 {
+    "key.category.re-entity-outliner.title" : "Re:Entity Outliner",
     "key.re-entity-outliner.selector": "Open Entity Selector",
     "key.re-entity-outliner.outline": "Toggle Entity Outline",
     "title.re-entity-outliner.selector": "Entity Selector",
-    "title.re-entity-outliner.title": "Entity Outliner",
     "button.re-entity-outliner.deselect": "Deselect All",
     "button.re-entity-outliner.select": "Select All",
     "button.re-entity-outliner.done": "Done",

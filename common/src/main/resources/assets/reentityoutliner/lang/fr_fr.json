@@ -1,8 +1,8 @@
 {
+    "key.category.re-entity-outliner.title" : "Re:Entity Outliner",
     "key.re-entity-outliner.selector": "Ouvrir le sélecteur d'entités",
     "key.re-entity-outliner.outline": "Activer le contour d'entités",
     "title.re-entity-outliner.selector": "Sélecteur d'entités",
-    "title.re-entity-outliner.title": "Sélecteur d'entités (Entity Outliner)",
     "button.re-entity-outliner.deselect": "Tout déselectionner",
     "button.re-entity-outliner.select": "Tout selectionner",
     "button.re-entity-outliner.done": "Terminer",
