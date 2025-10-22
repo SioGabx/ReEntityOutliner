@@ -24,11 +24,11 @@ public class MixinMinecraft {
     @Inject(at = @At("HEAD"), method = "shouldEntityAppearGlowing(Lnet/minecraft/world/entity/Entity;)Z", cancellable = true)
     public void onShouldEntityAppearGlowing(Entity entity, CallbackInfoReturnable<Boolean> cir) {
         if (isOutliningEntities()){
-        var settings = outlinedEntityTypes.get(entity.getType());
-        if (settings.outlined) {
-            cir.setReturnValue(true);
-            cir.cancel();
-        }
+            var settings = outlinedEntityTypes.get(entity.getType());
+            if (settings != null && settings.outlined) {
+                cir.setReturnValue(true);
+                cir.cancel();
+            }
         }
     }
 

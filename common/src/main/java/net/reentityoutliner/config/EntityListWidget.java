@@ -64,7 +64,7 @@ public class EntityListWidget extends ContainerObjectSelectionList<EntityListWid
 
             this.children.add(checkbox);
             var settings = outlinedEntityTypes.get(entityType);
-            if (settings.outlined) {
+            if (settings != null && settings.outlined) {
                 this.children.add(color);
             }
         }
