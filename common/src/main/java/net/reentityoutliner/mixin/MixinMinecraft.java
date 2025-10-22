@@ -25,7 +25,7 @@ public class MixinMinecraft {
     public void onShouldEntityAppearGlowing(Entity entity, CallbackInfoReturnable<Boolean> cir) {
         if (isOutliningEntities()){
         var settings = outlinedEntityTypes.get(entity.getType());
-        if (settings.outlined) {
+        if (settings != null && settings.outlined) {
             cir.setReturnValue(true);
             cir.cancel();
         }

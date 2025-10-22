@@ -24,7 +24,7 @@ public class ColorWidget extends Button {
         // this.pressFunc = b -> {};
         //https://github.com/Brian-Wuest/MC-Prefab/blob/1e49d3f09fa38e3d851baa10c907d651bf734e8e/Shared/src/com/prefab/gui/controls/ExtendedButton.java#L7
         var settings = outlinedEntityTypes.get(entityType);
-        if (settings.outlined){
+        if (settings !=null && settings.outlined){
             onShow();
         }
     }
