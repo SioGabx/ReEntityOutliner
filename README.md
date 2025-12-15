@@ -1,9 +1,7 @@
-NEW : Updated to 1.21.8 + NeoForge + Forge version !
+NEW : Updated to 1.21.11 + NeoForge + Forge version from 1.21.8!
 
 # Re:Entity Outliner
 Re:Entity Outliner is a clientside mod that allows you to select entity types to outline, making them visible through obstructions like a entity xray / entity ESP) at any distance (by using a glowing effect).
-
-Re:Entity Outliner is a continuation of adamviola's initial mod : [https://www.curseforge.com/minecraft/mc-mods/entity-outliner](https://www.curseforge.com/minecraft/mc-mods/entity-outliner)
 
 <a href="https://legacy.curseforge.com/minecraft/mc-mods/re-entity-outliner"><img alt="CurseForge page" src="https://img.shields.io/curseforge/dt/1079322?logo=curseforge"></a>
 <a href="https://github.com/SioGabx/EntityOutliner/releases"><img alt="GitHub all releases" src="https://img.shields.io/github/downloads/SioGabx/EntityOutliner/total?color=%2316d68a&logo=github"></a>
@@ -106,3 +104,6 @@ Custom keybinds are provided to open the entity selector and toggle the outline.
 
 ## License
 MIT. Feel free to use this mod in any modpack.
+
+## Mist
+Re:Entity Outliner is a continuation of adamviola's initial mod : [https://www.curseforge.com/minecraft/mc-mods/entity-outliner](https://www.curseforge.com/minecraft/mc-mods/entity-outliner)

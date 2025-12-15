@@ -16,7 +16,6 @@ public class ColorWidget extends Button {
     private MobCategoryColor color;
     private final EntityType<?> entityType;
 
-    //protected net.minecraft.client.gui.components.Button.OnPress pressFunc;
 
     public ColorWidget(int x, int y, int width, int height, Component message, EntityType<?> entityType) {
         super(x, y, width, height, message, b -> {}, Button.DEFAULT_NARRATION);
@@ -45,8 +44,13 @@ public class ColorWidget extends Button {
     }
 
     @Override
-    public void renderWidget(@NotNull GuiGraphics context, int mouseX, int mouseY, float delta) {
-        super.renderWidget(context, mouseX, mouseY, delta);
+    public void renderContents(@NotNull GuiGraphics context, int mouseX, int mouseY, float delta) {
+        //? if < 1.21.11 {
+        /*super.renderWidget(context, mouseX, mouseY, delta);
+         *///?} else {
+        this.renderDefaultSprite(context);
+        //this.renderDefaultLabel(context.textRendererForWidget(this, GuiGraphics.HoveredTextEffects.NONE));
+        //?}
         int color = (255 << 24) | (this.color.red << 16) | (this.color.green << 8) | this.color.blue;
         this.setMessage(Component.literal(this.color.colorName));
         Minecraft minecraft = Minecraft.getInstance();

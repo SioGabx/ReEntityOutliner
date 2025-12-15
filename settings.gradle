@@ -10,7 +10,8 @@ pluginManagement {
                 }
             }
             filter {
-                includeGroupAndSubgroups('net.fabricmc')
+                includeGroup('net.fabricmc')
+                includeGroup('net.fabricmc.unpick')
                 includeGroup('fabric-loom')
             }
         }
@@ -40,7 +41,6 @@ pluginManagement {
 }
 
 plugins {
-    //https://mvnrepository.com/artifact/org.gradle.toolchains.foojay-resolver-convention/org.gradle.toolchains.foojay-resolver-convention.gradle.plugin
     id 'org.gradle.toolchains.foojay-resolver-convention' version '0.8.0'
 }
 

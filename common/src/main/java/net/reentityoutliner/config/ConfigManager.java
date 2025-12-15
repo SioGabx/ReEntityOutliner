@@ -4,7 +4,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
-import net.minecraft.resources.ResourceLocation;
+//<1.21.11 : import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.reentityoutliner.Constants;
@@ -46,7 +47,7 @@ public class ConfigManager {
     private static final Gson GSON = new Gson();
 
 
-    private static final KeyMapping.Category KEYBINDING_CATEGORY = KeyMapping.Category.register(ResourceLocation.fromNamespaceAndPath("re-entity-outliner", "title"));
+    private static final KeyMapping.Category KEYBINDING_CATEGORY = KeyMapping.Category.register(Identifier.fromNamespaceAndPath("re-entity-outliner", "title"));
 
 
     public static final KeyMapping CONFIG_BIND = new KeyMapping(
