@@ -2,7 +2,7 @@ package net.reentityoutliner.config;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
 import net.minecraft.client.gui.components.Renderable;
@@ -14,6 +14,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,12 +88,12 @@ public class EntityListWidget extends ContainerObjectSelectionList<EntityListWid
         }
 
         @Override
-        public void renderContent(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, boolean hovered, float delta) {
+        public void extractContent(@NonNull GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, boolean hovered, float partialTick) {
             this.checkbox.setY(this.getContentY());
-            this.checkbox.render(guiGraphics, mouseX, mouseY, delta);
+            this.checkbox.extractContents(guiGraphics, mouseX, mouseY, partialTick);
             if (this.children.contains(this.color)) {
                 this.color.setY(this.getContentY());
-                this.color.render(guiGraphics, mouseX, mouseY, delta);
+                this.color.extractContents(guiGraphics, mouseX, mouseY, partialTick);
             }
         }
 
@@ -101,7 +102,7 @@ public class EntityListWidget extends ContainerObjectSelectionList<EntityListWid
             var settings = outlinedEntityTypes.get(this.entityType);
             if (settings != null && settings.outlined) {
                 if (this.color.isMouseOver(event.x(), event.y())) {
-                    this.color.onPress(event.button());
+                    this.color.onPress(event);
                 } else {
                     settings.outlined = false;
                     this.checkbox.onPress(event.buttonInfo());
@@ -119,9 +120,17 @@ public class EntityListWidget extends ContainerObjectSelectionList<EntityListWid
         }
 
         @Override
-        public @NotNull List<? extends GuiEventListener> children() {
-            return List.of();
+        public @NonNull List<? extends GuiEventListener> children() {
+            List<GuiEventListener> list = new ArrayList<>();
+            list.add(this.checkbox);
+
+            if (this.children.contains(this.color)) {
+                list.add(this.color);
+            }
+
+            return list;
         }
+
     }
 
 
@@ -151,27 +160,20 @@ public class EntityListWidget extends ContainerObjectSelectionList<EntityListWid
         }
 
         @Override
-        public void renderContent(GuiGraphics guiGraphics, int mouseX, int mouseY, boolean hovered, float delta) {
-            //graphics.fill(k, j, k + l, j + height, 0xFF0000FF); // fond bleu visible
-
-            //Font font = Minecraft.getInstance().font;
+        public void extractContent(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, boolean hovered, float partialTick) {
             int textWidth = font.width(title);
-            //int textX = this.getContentX() + (guiGraphics.guiWidth() - textWidth) / 2;
-            //int textY = this.getContentY() + (guiGraphics.guiHeight() - font.lineHeight) / 2;
 
             int textX = this.getContentX() + (this.getContentWidth() - textWidth) / 2;
             int textY = this.getContentY() + (this.getContentHeight() - font.lineHeight) / 2;
 
-            guiGraphics.drawString(
+            guiGraphics.text(
                     this.font,
                     this.title,
                     textX,
                     textY,
                     0xFFFFFFFF
             );
-
         }
-
 
         @Override
         public @NotNull List<? extends GuiEventListener> children() {
@@ -211,6 +213,8 @@ public class EntityListWidget extends ContainerObjectSelectionList<EntityListWid
         public String toString() {
             return this.title;
         }
+
+
     }
 
 }

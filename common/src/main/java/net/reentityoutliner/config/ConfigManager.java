@@ -38,7 +38,7 @@ public class ConfigManager {
         Minecraft client = Minecraft.getInstance();
         if (client.player != null) {
         String message = outliningEntities ? "gui.re-entity-outliner.outline.now-on" : "gui.re-entity-outliner.outline.now-off";
-        client.player.displayClientMessage(Component.translatable(message, Constants.MOD_NAME), true);
+        client.player.sendOverlayMessage(Component.translatable(message, Constants.MOD_NAME));
         }//{Constants.MOD_NAME} : Component.translatable("gui.re-entity-outliner.outline.now-on")
     }
 

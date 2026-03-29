@@ -1,7 +1,7 @@
 package net.reentityoutliner.config;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -10,6 +10,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.reentityoutliner.Constants;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -217,13 +218,12 @@ public class ConfigScreen extends Screen {
         save();
     }
 
-    public void render(@NotNull GuiGraphics context, int mouseX, int mouseY, float delta) {
-        super.render(context, mouseX, mouseY, delta);
-        list.render(context, mouseX, mouseY, delta);
+    public void extractRenderState(@NonNull GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
+super.extractRenderState(context, mouseX, mouseY, delta);
+list.extractRenderState(context, mouseX, mouseY, delta);
         this.setFocused(this.searchField);
-        this.searchField.render(context, mouseX, mouseY, delta);
+        this.searchField.extractRenderState(context, mouseX, mouseY, delta);
     }
-
     public boolean mouseDragged(net.minecraft.client.input.@NotNull MouseButtonEvent mouseButtonEvent, double dx, double dy) {
         return list.mouseDragged(mouseButtonEvent, dx, dy);
     }

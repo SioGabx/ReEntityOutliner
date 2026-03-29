@@ -1,8 +1,10 @@
 package net.reentityoutliner.config;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.input.InputWithModifiers;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EntityType;
 import net.reentityoutliner.util.MobCategoryColor;
@@ -32,7 +34,8 @@ public class ColorWidget extends Button {
         this.color = outlinedEntityTypes.get(this.entityType).color;
     }
 
-    public void onPress(int button) {
+    public void onPress(MouseButtonEvent event) {
+        int button = event.button();
         this.color = this.color.next();
         if (button == 1) {
             this.color = MobCategoryColor.of(entityType.getCategory());
@@ -41,19 +44,15 @@ public class ColorWidget extends Button {
         if (settings != null) {
             settings.color = this.color;
         }
+        //super.onPress(event);
     }
 
     @Override
-    public void renderContents(@NotNull GuiGraphics context, int mouseX, int mouseY, float delta) {
-        //? if < 1.21.11 {
-        /*super.renderWidget(context, mouseX, mouseY, delta);
-         *///?} else {
-        this.renderDefaultSprite(context);
-        //this.renderDefaultLabel(context.textRendererForWidget(this, GuiGraphics.HoveredTextEffects.NONE));
-        //?}
+    protected void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        this.extractDefaultSprite(graphics);
         int color = (255 << 24) | (this.color.red << 16) | (this.color.green << 8) | this.color.blue;
         this.setMessage(Component.literal(this.color.colorName));
         Minecraft minecraft = Minecraft.getInstance();
-        context.drawCenteredString(minecraft.font, this.color.colorName, getX() + getWidth() / 2, getY() + (getHeight() - 8) / 2, color);
+        graphics.centeredText(minecraft.font, this.color.colorName, getX() + getWidth() / 2, getY() + (getHeight() - 8) / 2, color);
     }
 }

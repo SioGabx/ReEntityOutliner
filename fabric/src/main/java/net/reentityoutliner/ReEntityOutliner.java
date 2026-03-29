@@ -5,7 +5,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.reentityoutliner.config.ConfigManager;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.reentityoutliner.config.ConfigScreen;
 
 import static net.reentityoutliner.config.ConfigManager.*;
@@ -22,8 +22,8 @@ public class ReEntityOutliner implements ModInitializer {
 
         // Use Fabric to bootstrap the Common mod.
 
-        KeyBindingHelper.registerKeyBinding(CONFIG_BIND);
-        KeyBindingHelper.registerKeyBinding(OUTLINE_BIND);
+        KeyMappingHelper.registerKeyMapping(CONFIG_BIND);
+        KeyMappingHelper.registerKeyMapping(OUTLINE_BIND);
         ConfigPath = FabricLoader.getInstance().getConfigDir();
         ConfigManager.load();
 
