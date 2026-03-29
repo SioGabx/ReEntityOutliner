@@ -9,7 +9,7 @@ body:
     attributes:
       value: |
         Hello, and thanks for filling out this bug report. Please respond to the following questions to the best of your ability.
-  - type: textarea
+  - type: input
     id: mc-version
     attributes:
       label: Minecraft Version
