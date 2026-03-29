@@ -2,7 +2,7 @@
   "required": true,
   "minVersion": "0.8",
   "package": "net.reentityoutliner.mixin",
-  "compatibilityLevel": "JAVA_18",
+  "compatibilityLevel": "JAVA_21",
   "mixins": [],
   "client": [
     "MixinTitleScreen"

@@ -1,8 +1,8 @@
 package net.reentityoutliner.platform;
 
 import net.reentityoutliner.platform.services.IPlatformHelper;
-import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLLoader;
+import net.minecraftforge.fml.loading.LoadingModList;
 
 public class ForgePlatformHelper implements IPlatformHelper {
 
@@ -15,7 +15,7 @@ public class ForgePlatformHelper implements IPlatformHelper {
     @Override
     public boolean isModLoaded(String modId) {
 
-        return ModList.get().isLoaded(modId);
+        return LoadingModList.getModFileById(modId) != null;
     }
 
     @Override
