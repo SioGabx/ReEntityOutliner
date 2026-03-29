@@ -1,5 +1,6 @@
 package net.reentityoutliner.config;
 
+import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -37,9 +38,6 @@ public class EntityListWidget extends ContainerObjectSelectionList<EntityListWid
         return super.scrollAmount();
     }
 
-
-
-
     public void addListEntry(EntityListWidget.Entry entry) {
         super.addEntry(entry);
     }
@@ -51,7 +49,7 @@ public class EntityListWidget extends ContainerObjectSelectionList<EntityListWid
     public abstract static class Entry extends ContainerObjectSelectionList.Entry<EntityListWidget.Entry> {
     }
 
-    //Entity entry def 1.21.9
+
     public static class EntityEntry extends EntityListWidget.Entry {
         private final Checkbox checkbox;
         private final ColorWidget color;
@@ -64,6 +62,7 @@ public class EntityListWidget extends ContainerObjectSelectionList<EntityListWid
             this.color = color;
 
             this.children.add(checkbox);
+
             var settings = outlinedEntityTypes.get(entityType);
             if (settings != null && settings.outlined) {
                 this.children.add(color);
@@ -76,47 +75,59 @@ public class EntityListWidget extends ContainerObjectSelectionList<EntityListWid
             return new EntityListWidget.EntityEntry(
                     Checkbox.builder(Component.translatable(entityType.getDescriptionId()), Minecraft.getInstance().font)
                             .pos(width / 2 - 155, 0)
-                            .selected(settings != null && settings.outlined).build(),
-                    new ColorWidget(width / 2 + 75, 0, 75, 20,Component.empty(), entityType),
+                            .selected(settings != null && settings.outlined)
+                            .build(),
+                    new ColorWidget(width / 2 + 75, 0, 75, 20, Component.empty(), entityType),
                     entityType
             );
         }
 
         @Override
         public @NotNull List<? extends NarratableEntry> narratables() {
-            return List.of();
+            return List.of(checkbox, color);
         }
 
         @Override
         public void extractContent(@NonNull GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, boolean hovered, float partialTick) {
-            this.checkbox.setY(this.getContentY());
+            this.checkbox.setY(this.getContentY() - 3);
             this.checkbox.extractContents(guiGraphics, mouseX, mouseY, partialTick);
+
             if (this.children.contains(this.color)) {
                 this.color.setY(this.getContentY());
                 this.color.extractContents(guiGraphics, mouseX, mouseY, partialTick);
+            }
+            if (this.checkbox.isMouseOver(mouseX, mouseY))
+            {
+                guiGraphics.requestCursor(CursorTypes.POINTING_HAND);
             }
         }
 
         @Override
         public boolean mouseClicked(@NotNull MouseButtonEvent event, boolean doubleClick) {
+
             var settings = outlinedEntityTypes.get(this.entityType);
-            if (settings != null && settings.outlined) {
-                if (this.color.isMouseOver(event.x(), event.y())) {
-                    this.color.onPress(event);
+            if (settings == null) return false;
+
+            if (this.children.contains(this.color) && this.color.mouseClicked(event, doubleClick)) {
+                return true;
+            }
+
+            if (this.checkbox.mouseClicked(event, doubleClick)) {
+                settings.outlined = this.checkbox.selected();
+
+                if (settings.outlined) {
+                    this.color.onShow();
+                    if (!this.children.contains(this.color)) {
+                        this.children.add(this.color);
+                    }
                 } else {
-                    settings.outlined = false;
-                    this.checkbox.onPress(event.buttonInfo());
                     this.children.remove(this.color);
                 }
-            } else {
-                if (settings != null) {
-                    settings.outlined = true;
-                }
-                this.color.onShow();
-                this.checkbox.onPress(event.buttonInfo());
-                this.children.add(this.color);
+
+                return true;
             }
-            return true;
+
+            return false;
         }
 
         @Override
@@ -130,9 +141,7 @@ public class EntityListWidget extends ContainerObjectSelectionList<EntityListWid
 
             return list;
         }
-
     }
-
 
     //HEADER ENTRY
     public static class HeaderEntry extends EntityListWidget.Entry {

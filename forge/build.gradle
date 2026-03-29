@@ -52,8 +52,9 @@ repositories {
 
 dependencies {
     implementation minecraft.dependency("net.minecraftforge:forge:${minecraft_version}-${forge_version}")
-    //annotationProcessor 'net.minecraftforge:eventbus-validator:7.0.1'
-    //annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+    annotationProcessor 'net.minecraftforge:eventbus-validator:7.0.1'
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+
 }
 
 sourceSets.each {
