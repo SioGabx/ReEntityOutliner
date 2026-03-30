@@ -1,4 +1,5 @@
 name: Publish release
+
 on:
   push:
 
@@ -8,26 +9,82 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v5
+
       - uses: actions/setup-java@v4
         with:
           java-version: '25'
           distribution: 'temurin'
+
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v5
+
       - name: Make gradlew executable
         run: chmod +x gradlew
+
+      # 📦 Build
       - name: Build with Gradle
         run: ./gradlew build
+
+      # 📤 Publish CurseForge
       - name: Publish
         run: ./gradlew publishMod
         env:
           CURSEFORGE_KEY: ${{ secrets.CURSEFORGE_KEY }}
-      - run: |
-          gh release create "$tag" \
-              "fabric/build/libs/*" "forge/build/libs/*" "neoforge/build/libs/*" \
-              --title="${tag#v}" \
+
+      # 🧠 Get versions
+      - name: Read properties
+        run: |
+          VERSION=$(grep "^version=" gradle.properties | cut -d'=' -f2)
+          MC_VERSION=$(grep "^minecraft_version=" gradle.properties | cut -d'=' -f2)
+
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "MC_VERSION=$MC_VERSION" >> $GITHUB_ENV
+          echo "BRANCH=${GITHUB_REF_NAME}" >> $GITHUB_ENV
+
+      # 🏷️ Build tag
+      - name: Build tag
+        run: |
+          if [ "$BRANCH" = "main" ]; then
+            TAG="v$VERSION"
+          else
+            TAG="$BRANCH-v$VERSION"
+          fi
+          echo "TAG=$TAG" >> $GITHUB_ENV
+
+      # 📦 Rename jars (important pour CurseForge style)
+      - name: Rename artifacts
+        run: |
+          for loader in fabric forge neoforge; do
+            for file in $loader/build/libs/*.jar; do
+              if [ -f "$file" ]; then
+                NEW_NAME="[$MC_VERSION] Re:Entity Outliner - $loader - $VERSION.jar"
+                mv "$file" "$loader/build/libs/$NEW_NAME"
+              fi
+            done
+          done
+
+      # 🚀 Create or update release
+      - name: Create or update GitHub Release
+        run: |
+          echo "Using tag: $TAG"
+
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release exists → uploading assets"
+            gh release upload "$TAG" \
+              fabric/build/libs/* \
+              forge/build/libs/* \
+              neoforge/build/libs/* \
+              --clobber
+          else
+            echo "Creating new release"
+            gh release create "$TAG" \
+              fabric/build/libs/* \
+              forge/build/libs/* \
+              neoforge/build/libs/* \
+              --title="$TAG"
+          fi
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ github.ref_name }}
