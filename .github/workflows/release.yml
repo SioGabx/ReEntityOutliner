@@ -48,37 +48,51 @@ jobs:
           fi
           echo "TAG=$TAG" >> $GITHUB_ENV
 
-      # 📦 Rename jars (important pour CurseForge style)
+      # 📦 Rename artifacts
       - name: Rename artifacts
         run: |
           for loader in fabric forge neoforge; do
             for file in $loader/build/libs/*.jar; do
               if [ -f "$file" ]; then
-                NEW_NAME="[$MC_VERSION] Re:Entity Outliner - $loader - $VERSION.jar"
+                # ignore unwanted jars
+                if [[ "$file" == *"-sources.jar" || "$file" == *"-dev.jar" ]]; then
+                  continue
+                fi
+
+                NEW_NAME="reentityoutliner-${loader}-${MC_VERSION}-${VERSION}.jar"
                 mv "$file" "$loader/build/libs/$NEW_NAME"
               fi
             done
           done
+
+      # 🔍 Debug jars
+      - name: Debug jars
+        run: |
+          echo "=== Fabric ==="
+          ls -l fabric/build/libs || true
+          echo "=== Forge ==="
+          ls -l forge/build/libs || true
+          echo "=== NeoForge ==="
+          ls -l neoforge/build/libs || true
 
       # 🚀 Create or update release
       - name: Create or update GitHub Release
         run: |
           echo "Using tag: $TAG"
 
+          FILES=$(find fabric forge neoforge -name "*.jar")
+
+          if [ -z "$FILES" ]; then
+            echo "❌ No JAR files found!"
+            exit 1
+          fi
+
           if gh release view "$TAG" >/dev/null 2>&1; then
             echo "Release exists → uploading assets"
-            gh release upload "$TAG" \
-              fabric/build/libs/* \
-              forge/build/libs/* \
-              neoforge/build/libs/* \
-              --clobber
+            gh release upload "$TAG" $FILES --clobber
           else
             echo "Creating new release"
-            gh release create "$TAG" \
-              fabric/build/libs/* \
-              forge/build/libs/* \
-              neoforge/build/libs/* \
-              --title="$TAG"
+            gh release create "$TAG" $FILES --title="$TAG"
           fi
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
