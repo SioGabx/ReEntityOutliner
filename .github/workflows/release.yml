@@ -45,7 +45,7 @@ jobs:
           if [ "$BRANCH" = "main" ]; then
             TAG="v$VERSION"
           else
-            TAG="mc$BRANCH-v$VERSION"
+            TAG="mc_$BRANCH-v$VERSION"
           fi
           echo "TAG=$TAG" >> $GITHUB_ENV
 
