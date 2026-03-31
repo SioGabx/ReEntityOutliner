@@ -60,7 +60,16 @@ jobs:
                 fi
 
                 NEW_NAME="reentityoutliner-${loader}-${MC_VERSION}-${VERSION}.jar"
-                mv "$file" "$loader/build/libs/$NEW_NAME"
+                TARGET="$loader/build/libs/$NEW_NAME"
+
+                # skip if already correct name
+                if [ "$file" = "$TARGET" ]; then
+                  echo "Skipping (already named): $file"
+                  continue
+                fi
+
+                echo "Renaming $file → $TARGET"
+                mv "$file" "$TARGET"
               fi
             done
           done
