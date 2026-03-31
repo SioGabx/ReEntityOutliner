@@ -28,12 +28,6 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build
 
-      # 📤 Publish CurseForge
-      - name: Publish
-        run: ./gradlew publishMod
-        env:
-          CURSEFORGE_KEY: ${{ secrets.CURSEFORGE_KEY }}
-
       # 🧠 Get versions
       - name: Read properties
         run: |
