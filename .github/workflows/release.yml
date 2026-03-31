@@ -48,32 +48,6 @@ jobs:
           fi
           echo "TAG=$TAG" >> $GITHUB_ENV
 
-      # 📦 Rename artifacts
-      - name: Rename artifacts
-        run: |
-          for loader in fabric forge neoforge; do
-            for file in $loader/build/libs/*.jar; do
-              if [ -f "$file" ]; then
-                # ignore unwanted jars
-                if [[ "$file" == *"-sources.jar" || "$file" == *"-dev.jar" ]]; then
-                  continue
-                fi
-
-                NEW_NAME="reentityoutliner-${loader}-${MC_VERSION}-${VERSION}.jar"
-                TARGET="$loader/build/libs/$NEW_NAME"
-
-                # skip if already correct name
-                if [ "$file" = "$TARGET" ]; then
-                  echo "Skipping (already named): $file"
-                  continue
-                fi
-
-                echo "Renaming $file → $TARGET"
-                mv "$file" "$TARGET"
-              fi
-            done
-          done
-
       # 🔍 Debug jars
       - name: Debug jars
         run: |
@@ -89,18 +63,39 @@ jobs:
         run: |
           echo "Using tag: $TAG"
 
-          FILES=$(find fabric forge neoforge -name "*.jar")
+          # Initialisation d'une variable pour stocker la liste des fichiers valides trouvés
+          FILES=""
+          
+          # Boucle sur les différents loaders
+          for loader in fabric forge neoforge; do
+            # Construction du nom de fichier exact attendu
+            EXPECTED_NAME="reentityoutliner-${loader}-${MC_VERSION}-${VERSION}.jar"
+            
+            # Recherche du fichier dans le bon dossier, en ignorant la casse avec -iname
+            FOUND=$(find "$loader/build/libs" -maxdepth 1 -type f -iname "$EXPECTED_NAME" 2>/dev/null || true)
+            
+            if [ -n "$FOUND" ]; then
+              echo "✅ Fichier trouvé : $FOUND"
+              # Ajout des fichiers trouvés à la variable, sur une seule ligne
+              FILES="$FILES $(echo $FOUND | tr '\n' ' ')"
+            else
+              echo "⚠️ Fichier introuvable (ignore case) : $EXPECTED_NAME dans $loader/build/libs/"
+            fi
+          done
+
+          # Nettoyage des espaces de la liste des fichiers
+          FILES=$(echo $FILES | xargs)
 
           if [ -z "$FILES" ]; then
-            echo "❌ No JAR files found!"
+            echo "❌ Aucun fichier JAR trouvé correspondant aux noms attendus !"
             exit 1
           fi
 
           if gh release view "$TAG" >/dev/null 2>&1; then
-            echo "Release exists → uploading assets"
+            echo "La release existe → Upload des assets"
             gh release upload "$TAG" $FILES --clobber
           else
-            echo "Creating new release"
+            echo "Création d'une nouvelle release"
             gh release create "$TAG" $FILES --title="$TAG"
           fi
         env:
