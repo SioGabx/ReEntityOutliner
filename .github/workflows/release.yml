@@ -2,6 +2,7 @@ name: Publish release
 
 on:
   push:
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -44,7 +45,7 @@ jobs:
           if [ "$BRANCH" = "main" ]; then
             TAG="v$VERSION"
           else
-            TAG="$BRANCH-v$VERSION"
+            TAG="mc$BRANCH-v$VERSION"
           fi
           echo "TAG=$TAG" >> $GITHUB_ENV
 
