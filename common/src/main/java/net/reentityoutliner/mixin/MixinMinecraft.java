@@ -31,10 +31,4 @@ public class MixinMinecraft {
             }
         }
     }
-
-
-
-
-
-
 }

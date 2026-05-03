@@ -35,7 +35,7 @@ public class ReEntityOutliner {
         );
 
         BusGroup busGroup = modLoadingContext.getModBusGroup();
-        RegisterKeyMappingsEvent.getBus(busGroup).addListener(this::registerKeyBinding);
+        RegisterKeyMappingsEvent.BUS.addListener(this::registerKeyBinding);
 
         TickEvent.ClientTickEvent.Pre.BUS.addListener(this::onClientTick);
 
