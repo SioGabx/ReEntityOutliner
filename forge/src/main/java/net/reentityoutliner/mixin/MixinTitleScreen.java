@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(TitleScreen.class)
 public class MixinTitleScreen {
 
-    @Inject(at = @At("HEAD"), method = "init()V", remap = false)
+    @Inject(at = @At("HEAD"), method = "init()V", remap = true)
     private void init(CallbackInfo info) {
 
         Constants.LOG.info("This line is printed from Forge!");
