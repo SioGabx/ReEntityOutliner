@@ -1,0 +1,11 @@
+package net.reentityoutliner.util;
+
+public class EntityTypesProperties {
+    public MobCategoryColor color;
+    public boolean outlined;
+
+    public EntityTypesProperties(MobCategoryColor color, boolean outlined) {
+        this.color = color;
+        this.outlined = outlined;
+    }
+}
