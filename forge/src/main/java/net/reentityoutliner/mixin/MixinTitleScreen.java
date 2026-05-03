@@ -1,6 +1,7 @@
 package net.reentityoutliner.mixin;
 
 import net.reentityoutliner.Constants;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.TitleScreen;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -12,6 +13,8 @@ public class MixinTitleScreen {
 
     @Inject(at = @At("HEAD"), method = "init()V")
     private void init(CallbackInfo info) {
-        Constants.LOG.info("Forge : Loaded Re:Entity Outliner");
+
+        Constants.LOG.info("This line is printed by an example mod mixin from Forge!");
+        Constants.LOG.info("MC Version: {}", Minecraft.getInstance().getVersionType());
     }
 }

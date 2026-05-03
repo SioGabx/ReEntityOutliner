@@ -13,13 +13,10 @@
     },
     "license": "${license}",
     "icon": "assets/reentityoutliner/icon.png",
-    "environment": "client",
+    "environment": "*",
     "entrypoints": {
         "main": [
-          "net.reentityoutliner.ReEntityOutliner"
-        ],
-        "modmenu": [
-            "net.reentityoutliner.config.ModMenuIntegration"
+            "net.reentityoutliner.ReEntityOutliner"
         ]
     },
     "mixins": [
