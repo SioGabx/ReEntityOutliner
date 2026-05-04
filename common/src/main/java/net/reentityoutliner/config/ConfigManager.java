@@ -22,6 +22,7 @@ import java.nio.file.Path;
 import java.util.HashMap;
 
 public class ConfigManager {
+
     public static final HashMap<EntityType<?>, EntityTypesProperties> outlinedEntityTypes = new HashMap<>();
 
     private static boolean outliningEntities = false;
@@ -99,10 +100,16 @@ public class ConfigManager {
         }
     }
 
+    public static EntityTypesProperties getOrCreateEntityProperties(EntityType<?> entityType) {
+        return outlinedEntityTypes.computeIfAbsent(entityType, type -> {
+            var color = MobCategoryColor.of(type.getCategory());
+            return new EntityTypesProperties(color, false);
+        });
+    }
+
     public static void load() {
         for (EntityType<?> entityType : Registries.getAllEntityTypes()) {
-            var color = MobCategoryColor.of(entityType.getCategory());
-            outlinedEntityTypes.put(entityType, new EntityTypesProperties(color, false));
+            getOrCreateEntityProperties(entityType);
         }
 
         try {
@@ -139,8 +146,7 @@ public class ConfigManager {
                     MobCategoryColor color = MobCategoryColor.valueOf(colorName);
 
                     boolean outlined = entityObj.has("outlined") && entityObj.get("outlined").getAsBoolean();
-                    var settings = outlinedEntityTypes.get(entityType);
-
+                    var settings = ConfigManager.getOrCreateEntityProperties(entityType);
                     if (settings != null) {
                         settings.color = color;
                         settings.outlined = outlined;

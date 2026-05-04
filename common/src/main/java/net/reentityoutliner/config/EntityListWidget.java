@@ -16,8 +16,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static net.reentityoutliner.config.ConfigManager.outlinedEntityTypes;
-
 public class EntityListWidget extends ContainerObjectSelectionList<EntityListWidget.Entry> {
 
     public EntityListWidget(Minecraft minecraft, int width, int height, int top, int bottom, int itemHeight) {
@@ -63,14 +61,14 @@ public class EntityListWidget extends ContainerObjectSelectionList<EntityListWid
             this.color = color;
             this.children.add(checkbox);
 
-            var settings = outlinedEntityTypes.get(entityType);
+            var settings = ConfigManager.getOrCreateEntityProperties(entityType);
             if (settings != null && settings.outlined) {
                 this.children.add(color);
             }
         }
 
         public static EntityEntry create(EntityType<?> entityType, int width) {
-            var settings = outlinedEntityTypes.get(entityType);
+            var settings = ConfigManager.getOrCreateEntityProperties(entityType);
             boolean isChecked = (settings != null && settings.outlined);
 
             // Constructeur 1.20.1
@@ -99,7 +97,7 @@ public class EntityListWidget extends ContainerObjectSelectionList<EntityListWid
 
         @Override
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
-            var settings = outlinedEntityTypes.get(this.entityType);
+            var settings = ConfigManager.getOrCreateEntityProperties(this.entityType);
             if (settings == null) return false;
 
             // Logique identique à ton vieux code mais adaptée

@@ -78,7 +78,7 @@ public class ConfigScreen extends Screen {
                             String text = this.searchField.getValue().toLowerCase().trim();
                             if (searcher.containsKey(text)) {
                                 for (EntityType<?> entityType : searcher.get(text)) {
-                                    var settings = outlinedEntityTypes.get(entityType);
+                                    var settings = ConfigManager.getOrCreateEntityProperties(entityType);
                                     if (settings != null) settings.outlined = false;
                                 }
                             }
@@ -96,7 +96,7 @@ public class ConfigScreen extends Screen {
                             String text = this.searchField.getValue().toLowerCase().trim();
                             if (searcher.containsKey(text)) {
                                 for (EntityType<?> entityType : searcher.get(text)) {
-                                    var settings = outlinedEntityTypes.get(entityType);
+                                    var settings = ConfigManager.getOrCreateEntityProperties(entityType);
                                     if (settings != null) settings.outlined = true;
                                 }
                             }
