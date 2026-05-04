@@ -11,7 +11,6 @@ import net.reentityoutliner.util.MobCategoryColor;
 import net.minecraft.util.CommonColors;
 import org.jspecify.annotations.NonNull;
 
-import static net.reentityoutliner.config.ConfigManager.outlinedEntityTypes;
 
 public class ColorWidget extends Button {
 
@@ -24,14 +23,14 @@ public class ColorWidget extends Button {
 
         this.entityType = entityType;
 
-        var settings = outlinedEntityTypes.get(entityType);
+        var settings = ConfigManager.getOrCreateEntityProperties(entityType);
         if (settings != null && settings.outlined) {
             onShow();
         }
     }
 
     public void onShow() {
-        var settings = outlinedEntityTypes.get(this.entityType);
+        var settings = ConfigManager.getOrCreateEntityProperties(this.entityType);
         if (settings != null) {
             this.color = settings.color;
         }
@@ -46,7 +45,7 @@ public class ColorWidget extends Button {
             this.color = this.color.next();
         }
 
-        var settings = outlinedEntityTypes.get(entityType);
+        var settings = ConfigManager.getOrCreateEntityProperties(entityType);
         if (settings != null) {
             settings.color = this.color;
         }

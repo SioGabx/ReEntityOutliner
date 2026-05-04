@@ -66,6 +66,19 @@ public class ConfigManager {
         return ConfigPath.resolve("reentityoutliner.json");
     }
 
+    public static EntityTypesProperties getOrCreateEntityProperties(EntityType<?> entityType) {
+        return outlinedEntityTypes.computeIfAbsent(entityType, type -> {
+            var color = MobCategoryColor.of(type.getCategory());
+            return new EntityTypesProperties(color, false);
+        });
+    }
+
+    public static EntityTypesProperties getEntityProperties(EntityType<?> entityType) {
+        return outlinedEntityTypes.get(entityType);
+    }
+
+
+
     public static void save() {
         JsonObject config = new JsonObject();
 
@@ -102,9 +115,7 @@ public class ConfigManager {
 
     public static void load(){
         for (EntityType<?> entityType : Registries.getAllEntityTypes()) {
-            var color = MobCategoryColor.of(entityType.getCategory());
-            outlinedEntityTypes.put(entityType, new EntityTypesProperties(color, false));
-            //Constants.LOG.info(getReadableName(entityType));
+            getOrCreateEntityProperties(entityType);
         }
 
         try {
@@ -144,7 +155,7 @@ public class ConfigManager {
                     // Récupérer outlined
                     boolean outlined = entityObj.has("outlined") && entityObj.get("outlined").getAsBoolean();
 
-                    var settings = outlinedEntityTypes.get(entityType);
+                    var settings = ConfigManager.getOrCreateEntityProperties(entityType);
 
                     if (settings != null) {
                         settings.color = color;

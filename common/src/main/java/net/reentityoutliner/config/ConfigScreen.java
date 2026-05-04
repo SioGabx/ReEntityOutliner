@@ -71,12 +71,12 @@ public class ConfigScreen extends Screen {
 
         this.addRenderableWidget(Button.builder(
                         Component.translatable("button.re-entity-outliner.deselect"),
-                        (button) -> {
+                        (_) -> {
                             String text = this.searchField.getValue();
                             if (searcher.containsKey(text)) {
                                 List<EntityType<?>> results = searcher.get(text);
                                 for (EntityType<?> entityType : results) {
-                                    var settings = outlinedEntityTypes.get(entityType);
+                                    var settings = ConfigManager.getOrCreateEntityProperties(entityType);
                                     if (settings != null) settings.outlined = false;
                                 }
                             }
@@ -90,12 +90,12 @@ public class ConfigScreen extends Screen {
 
         this.addRenderableWidget(Button.builder(
                         Component.translatable("button.re-entity-outliner.select"),
-                        (button) -> {
+                        (_) -> {
                             String text = this.searchField.getValue();
                             if (searcher.containsKey(text)) {
                                 List<EntityType<?>> results = searcher.get(text);
                                 for (EntityType<?> entityType : results) {
-                                    var settings = outlinedEntityTypes.get(entityType);
+                                    var settings = ConfigManager.getOrCreateEntityProperties(entityType);
                                     if (settings != null) settings.outlined = true;
                                 }
                             }
@@ -119,9 +119,7 @@ public class ConfigScreen extends Screen {
 
         this.addRenderableWidget(Button.builder(
                         Component.translatable("button.re-entity-outliner.done"),
-                        (button) -> {
-                            if (this.minecraft != null) this.minecraft.setScreen(this.parent);
-                        })
+                        (_) -> this.minecraft.setScreen(this.parent))
                 .size(buttonWidth, buttonHeight)
                 .pos(buttonInterval + (buttonWidth + buttonInterval) * 4, buttonY)
                 .build());

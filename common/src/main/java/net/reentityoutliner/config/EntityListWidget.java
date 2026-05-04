@@ -20,7 +20,6 @@ import org.jspecify.annotations.NonNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static net.reentityoutliner.config.ConfigManager.outlinedEntityTypes;
 
 public class EntityListWidget extends ContainerObjectSelectionList<EntityListWidget.Entry>{
     public EntityListWidget(Minecraft minecraft, int width, int height, int y, int itemHeight) {
@@ -63,14 +62,14 @@ public class EntityListWidget extends ContainerObjectSelectionList<EntityListWid
 
             this.children.add(checkbox);
 
-            var settings = outlinedEntityTypes.get(entityType);
+            var settings = ConfigManager.getOrCreateEntityProperties(entityType);
             if (settings != null && settings.outlined) {
                 this.children.add(color);
             }
         }
 
         public static EntityListWidget.EntityEntry create(EntityType<?> entityType, int width) {
-            var settings = outlinedEntityTypes.get(entityType);
+            var settings = ConfigManager.getOrCreateEntityProperties(entityType);
 
             return new EntityListWidget.EntityEntry(
                     Checkbox.builder(Component.translatable(entityType.getDescriptionId()), Minecraft.getInstance().font)
@@ -105,7 +104,7 @@ public class EntityListWidget extends ContainerObjectSelectionList<EntityListWid
         @Override
         public boolean mouseClicked(@NotNull MouseButtonEvent event, boolean doubleClick) {
 
-            var settings = outlinedEntityTypes.get(this.entityType);
+            var settings = ConfigManager.getOrCreateEntityProperties(this.entityType);
             if (settings == null) return false;
 
             if (this.children.contains(this.color) && this.color.mouseClicked(event, doubleClick)) {

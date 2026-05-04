@@ -3,6 +3,7 @@ package net.reentityoutliner.mixin;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
+import net.reentityoutliner.config.ConfigManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -19,7 +20,7 @@ public abstract class MixinEntity {
     @Inject(at = @At("HEAD"), method = "getTeamColor()I", cancellable = true)
     private void onGetTeamColor(CallbackInfoReturnable<Integer> info) {
         if (isOutliningEntities()) {
-            var settings = outlinedEntityTypes.get(this.getType());
+            var settings = ConfigManager.getEntityProperties(this.getType());
             if (settings != null && settings.outlined) {
                 //Get generic colors for entity
                 int red = settings.color.red;
