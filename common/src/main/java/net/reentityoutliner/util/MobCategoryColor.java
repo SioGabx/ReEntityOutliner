@@ -42,7 +42,7 @@ public enum MobCategoryColor {
     }
 
     public static MobCategoryColor of(MobCategory group) {
-        return spawnGroupColors.get(group);
+        return spawnGroupColors.getOrDefault(group, MobCategoryColor.WHITE);
     }
 
     public MobCategoryColor next() {

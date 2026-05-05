@@ -73,7 +73,7 @@ public class ConfigManager {
         for (var entry : outlinedEntityTypes.entrySet()) {
             EntityType<?> entityType = entry.getKey();
             
-            System.out.println("ReEntityOutliner Debug : " + entityType.toString());
+            //System.out.println("ReEntityOutliner Debug : " + entityType.toString());
             var settings = entry.getValue();
             if (settings != null) {
                 JsonObject entityObj = new JsonObject();
@@ -91,10 +91,10 @@ public class ConfigManager {
 
                 outlinedEntitiesArray.add(entityObj);
             }
-            else
-            {
-                System.out.println("ReEntityOutliner Debug : Settings null for " + entityType.toString());
-            }
+            //else
+            //{
+            //    System.out.println("ReEntityOutliner Debug : Settings null for " + entityType.toString());
+            //}
         }
 
         config.add("outlinedEntities", outlinedEntitiesArray);
