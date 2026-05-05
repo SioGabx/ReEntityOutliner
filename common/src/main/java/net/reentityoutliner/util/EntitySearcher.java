@@ -101,5 +101,4 @@ public class EntitySearcher {
             allEntities.sort(Comparator.comparing(e -> e.getDescription().getString()));
         }
     }
-
 }
