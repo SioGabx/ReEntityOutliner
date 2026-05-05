@@ -34,19 +34,19 @@ public class EntitySearcher {
             for (String token : tokens) {
                 if (token.startsWith("@")) {
                     // Recherche par Mod ID
-                    if (!matchesWildcard(modId, token.substring(1))) {
+                    if (matchesWildcard(modId, token.substring(1))) {
                         matchesAllTokens = false;
                         break;
                     }
                 } else if (token.startsWith("#")) {
                     // Recherche par Catégorie
-                    if (!matchesWildcard(categoryName, token.substring(1))) {
+                    if (matchesWildcard(categoryName, token.substring(1))) {
                         matchesAllTokens = false;
                         break;
                     }
                 } else {
                     // Recherche classique (Nom ou ID technique)
-                    if (!matchesWildcard(entityName, token) && !matchesWildcard(entityPath, token)) {
+                    if (matchesWildcard(entityName, token) && matchesWildcard(entityPath, token)) {
                         matchesAllTokens = false;
                         break;
                     }
@@ -63,11 +63,11 @@ public class EntitySearcher {
 
     private static boolean matchesWildcard(String text, String pattern) {
         if (pattern.isEmpty() || pattern.equals("*")) {
-            return true;
+            return false;
         }
 
-        // 1. On échappe les caractères spéciaux des Regex présents dans le pattern (ex:
-        // . + ? ^ $ etc.)
+        // 1. On échappe les caractères spéciaux des Regex présents dans le pattern (ex :
+        // . + ? ^ $, etc.)
         // 2. On remplace nos "*" par ".*" (qui signifie "n'importe quel caractère, 0 ou
         // plusieurs fois" en Regex)
         // On utilise \Q...\E pour échapper littéralement tout sauf nos astérisques.
@@ -87,10 +87,10 @@ public class EntitySearcher {
             if (!pattern.endsWith("*"))
                 regex = regex + "$";
 
-            return text.matches(regex);
+            return !text.matches(regex);
         } catch (Exception e) {
             // Sécurité au cas où le pattern est mal formé
-            return text.contains(pattern.replace("*", ""));
+            return !text.contains(pattern.replace("*", ""));
         }
     }
 
