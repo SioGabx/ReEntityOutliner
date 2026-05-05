@@ -4,12 +4,15 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.reentityoutliner.Constants;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Console;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -20,7 +23,7 @@ import static net.reentityoutliner.util.Registries.getAllEntityTypes;
 
 public class ConfigScreen extends Screen {
     private EditBox searchField;
-    public static HashMap<String, List<EntityType<?>>> searcher;
+    public static List<EntityType<?>> allEntities;
     private static String searchText = "";
     public static boolean groupByCategory = true;
     public static EntityListWidget list;
@@ -34,8 +37,8 @@ public class ConfigScreen extends Screen {
     @Override
     protected void init() {
         Constants.LOG.info("Init config screen");
-        if (searcher == null) {
-            initializePrefixTree();
+        if (allEntities == null) {
+            initializeEntities();
         }
 
         final int margin = 35;
@@ -75,14 +78,12 @@ public class ConfigScreen extends Screen {
         this.addRenderableWidget(Button.builder(
                         Component.translatable("button.re-entity-outliner.deselect"),
                         (button) -> {
-                            String text = this.searchField.getValue().toLowerCase().trim();
-                            if (searcher.containsKey(text)) {
-                                for (EntityType<?> entityType : searcher.get(text)) {
-                                    var settings = ConfigManager.getOrCreateEntityProperties(entityType);
-                                    if (settings != null) settings.outlined = false;
-                                }
-                            }
-                            double previousScroll = list.getScrollAmount();
+                            List<EntityType<?>> currentResults = getSearchResults(this.searchField.getValue());
+                    for (EntityType<?> entityType : currentResults) {
+                        var settings = ConfigManager.getOrCreateEntityProperties(entityType);
+                        if (settings != null) settings.outlined = false;
+                    }
+                     double previousScroll = list.getScrollAmount();
                             this.onSearchFieldUpdate(this.searchField.getValue());
                             list.setScrollAmount(previousScroll);
                         })
@@ -93,13 +94,11 @@ public class ConfigScreen extends Screen {
         this.addRenderableWidget(Button.builder(
                         Component.translatable("button.re-entity-outliner.select"),
                         (button) -> {
-                            String text = this.searchField.getValue().toLowerCase().trim();
-                            if (searcher.containsKey(text)) {
-                                for (EntityType<?> entityType : searcher.get(text)) {
-                                    var settings = ConfigManager.getOrCreateEntityProperties(entityType);
+                            List<EntityType<?>> currentResults = getSearchResults(this.searchField.getValue());
+                    for (EntityType<?> entityType : currentResults) {
+                     var settings = ConfigManager.getOrCreateEntityProperties(entityType);
                                     if (settings != null) settings.outlined = true;
                                 }
-                            }
                             double previousScroll = list.getScrollAmount();
                             this.onSearchFieldUpdate(this.searchField.getValue());
                             list.setScrollAmount(previousScroll);
@@ -130,13 +129,46 @@ public class ConfigScreen extends Screen {
         this.onSearchFieldUpdate(this.searchField.getValue());
     }
 
+private List<EntityType<?>> getSearchResults(String text) {
+        String query = text.toLowerCase().trim();
+        List<EntityType<?>> results = new ArrayList<>();
+        
+        if (query.isEmpty()) {
+            return new ArrayList<>(allEntities);
+        }
+
+        boolean searchByMod = query.startsWith("@");
+        String filter = searchByMod ? query.substring(1) : query;
+
+        for (EntityType<?> entityType : allEntities) {
+            boolean matches;
+            
+            if (searchByMod) {
+                // Recherche dans le Mod ID (namespace)
+                ResourceLocation id = BuiltInRegistries.ENTITY_TYPE.getKey(entityType);
+                //System.out.println("ReEntityOutliner: " + id.getNamespace());
+                //Constants.LOG.info("ReEntityOutliner: " + id.getNamespace());
+                matches = id.getNamespace().toLowerCase().contains(filter);
+            } else {
+                // Recherche classique dans le nom (avec .contains au lieu du préfixe exact, beaucoup plus permissif)
+                String name = entityType.getDescription().getString().toLowerCase();
+                matches = name.contains(filter);
+            }
+
+            if (matches) {
+                results.add(entityType);
+            }
+        }
+        return results;
+    }
+
     private void onSearchFieldUpdate(String text) {
         searchText = text;
-        String query = text.toLowerCase().trim();
         list.clearListEntries();
 
-        if (searcher.containsKey(query)) {
-            List<EntityType<?>> results = searcher.get(query);
+        List<EntityType<?>> results = getSearchResults(text);
+
+        if (!results.isEmpty()) {
             if (groupByCategory) {
                 HashMap<MobCategory, List<EntityType<?>>> resultsByCategory = new HashMap<>();
                 for (EntityType<?> entityType : results) {
@@ -157,7 +189,7 @@ public class ConfigScreen extends Screen {
                 }
             }
         } else {
-            list.addListEntry(EntityListWidget.HeaderEntry.create(null, this.font));
+            list.addListEntry(EntityListWidget.HeaderEntry.create(null, this.font)); // Afficher un header vide ou un message "Aucun résultat"
         }
 
         if (list.getScrollAmount() > list.getMaxScroll()) {
@@ -165,32 +197,10 @@ public class ConfigScreen extends Screen {
         }
     }
 
-    private void initializePrefixTree() {
-        searcher = new HashMap<>();
-        List<EntityType<?>> allResults = new ArrayList<>();
-        searcher.put("", allResults);
-
-        List<EntityType<?>> entityTypes = new ArrayList<>(getAllEntityTypes());
-        entityTypes.sort(Comparator.comparing(EntityType::getDescriptionId));
-
-        for (EntityType<?> entityType : entityTypes) {
-            String name = entityType.getDescription().getString().toLowerCase();
-            allResults.add(entityType);
-            List<String> prefixes = new ArrayList<>();
-            prefixes.add("");
-
-            for (int i = 0; i < name.length(); i++) {
-                char character = name.charAt(i);
-                for (int p = 0; p < prefixes.size(); p++) {
-                    String prefix = prefixes.get(p) + character;
-                    prefixes.set(p, prefix);
-                    searcher.computeIfAbsent(prefix, k -> new ArrayList<>()).add(entityType);
-                }
-                if (Character.isWhitespace(character)) {
-                    prefixes.add("");
-                }
-            }
-        }
+    private void initializeEntities() {
+        allEntities = new ArrayList<>(getAllEntityTypes());
+        // On trie une seule fois au chargement
+        allEntities.sort(Comparator.comparing(e -> e.getDescription().getString()));
     }
 
     @Override

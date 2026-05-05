@@ -1,15 +1,21 @@
 package net.reentityoutliner.config;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
+import net.reentityoutliner.Constants;
+
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -71,13 +77,20 @@ public class EntityListWidget extends ContainerObjectSelectionList<EntityListWid
             var settings = ConfigManager.getOrCreateEntityProperties(entityType);
             boolean isChecked = (settings != null && settings.outlined);
 
-            // Constructeur 1.20.1
+            // 155+75=230
             Checkbox cb = new Checkbox(
-                    width / 2 - 155, 0, 310, 20,
+                    width / 2 - 155, 0, 230, 20,
                     entityType.getDescription(),
                     isChecked,
                     true
             );
+            //tooltips
+            ResourceLocation entityId = BuiltInRegistries.ENTITY_TYPE.getKey(entityType);
+            
+            Component tooltipText = Component.empty()
+                    .append(entityType.getDescription())
+                    .append(Component.literal("\n" + entityId.toString()).withStyle(ChatFormatting.DARK_GRAY));
+            cb.setTooltip(Tooltip.create(tooltipText));
 
             ColorWidget cw = new ColorWidget(width / 2 + 75, 0, 75, 20, Component.empty(), entityType);
 
@@ -98,7 +111,11 @@ public class EntityListWidget extends ContainerObjectSelectionList<EntityListWid
         @Override
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
             var settings = ConfigManager.getOrCreateEntityProperties(this.entityType);
-            if (settings == null) return false;
+            if (settings == null) {
+                System.out.println("ReEntityOutliner Debug : Settings null for " + entityType.toString());
+                Constants.LOG.info("ReEntityOutliner Debug : Settings null for " + entityType.toString());
+                return false;
+            }
 
             // Logique identique à ton vieux code mais adaptée
             if (this.color.isMouseOver(mouseX, mouseY) && this.children.contains(this.color)) {

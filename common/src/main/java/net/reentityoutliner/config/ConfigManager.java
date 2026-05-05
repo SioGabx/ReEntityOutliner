@@ -9,6 +9,7 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.reentityoutliner.Constants;
 import net.reentityoutliner.util.EntityTypesProperties;
@@ -23,7 +24,8 @@ import java.util.HashMap;
 
 public class ConfigManager {
 
-    public static final HashMap<EntityType<?>, EntityTypesProperties> outlinedEntityTypes = new HashMap<>();
+    // Utilisation d'un String (ex: "minecraft:sheep") comme clé
+    public static final HashMap<String, EntityTypesProperties> outlinedEntityTypes = new HashMap<>();
 
     private static boolean outliningEntities = false;
 
@@ -36,7 +38,6 @@ public class ConfigManager {
         Minecraft client = Minecraft.getInstance();
         if (client.player != null) {
             String message = outliningEntities ? "gui.re-entity-outliner.outline.now-on" : "gui.re-entity-outliner.outline.now-off";
-            // En 1.20.1, displayClientMessage avec le booléen 'true' permet d'afficher dans l'ActionBar (au-dessus de la barre d'inventaire)
             client.player.displayClientMessage(Component.translatable(message, Constants.MOD_NAME), true);
         }
     }
@@ -44,8 +45,6 @@ public class ConfigManager {
     public static Path ConfigPath = null;
     private static final Gson GSON = new Gson();
 
-    // En 1.20.1, les catégories de KeyMappings sont simplement des chaînes de caractères (clés de traduction).
-    // Plus besoin d'utiliser un objet de type Category.register().
     public static final String KEYBINDING_CATEGORY = "Re:Entity Outliner";
 
     public static final KeyMapping CONFIG_BIND = new KeyMapping(
@@ -71,14 +70,13 @@ public class ConfigManager {
         JsonArray outlinedEntitiesArray = new JsonArray();
 
         for (var entry : outlinedEntityTypes.entrySet()) {
-            EntityType<?> entityType = entry.getKey();
-            
-            //System.out.println("ReEntityOutliner Debug : " + entityType.toString());
+            String entityId = entry.getKey();
             var settings = entry.getValue();
+            
             if (settings != null) {
                 JsonObject entityObj = new JsonObject();
-                // En 1.20.1, on passe par BuiltInRegistries pour récupérer le nom de l'entité
-                entityObj.addProperty("entity", BuiltInRegistries.ENTITY_TYPE.getKey(entityType).toString());
+                // La clé est déjà un String, plus besoin de conversion ici
+                entityObj.addProperty("entity", entityId);
 
                 JsonObject colorObj = new JsonObject();
                 colorObj.addProperty("name", settings.color.name());
@@ -90,11 +88,10 @@ public class ConfigManager {
                 entityObj.addProperty("outlined", settings.outlined);
 
                 outlinedEntitiesArray.add(entityObj);
+            } else {
+                System.out.println("ReEntityOutliner Debug : Settings null for " + entityId);
+                Constants.LOG.info("ReEntityOutliner Debug : Settings null for " + entityId);
             }
-            //else
-            //{
-            //    System.out.println("ReEntityOutliner Debug : Settings null for " + entityType.toString());
-            //}
         }
 
         config.add("outlinedEntities", outlinedEntitiesArray);
@@ -107,14 +104,24 @@ public class ConfigManager {
         }
     }
 
+    // Méthode pour obtenir le type EntityType dynamiquement depuis un String
+    public static EntityType<?> getEntityTypeFromString(String entityId) {
+        ResourceLocation location = new ResourceLocation(entityId);
+        return BuiltInRegistries.ENTITY_TYPE.getOptional(location).orElse(null);
+    }
+
+    // Surcharge/Adaptation pour continuer d'utiliser l'objet EntityType dans le code
     public static EntityTypesProperties getOrCreateEntityProperties(EntityType<?> entityType) {
-        return outlinedEntityTypes.computeIfAbsent(entityType, type -> {
-            var color = MobCategoryColor.of(type.getCategory());
+        String entityId = BuiltInRegistries.ENTITY_TYPE.getKey(entityType).toString();
+        
+        return outlinedEntityTypes.computeIfAbsent(entityId, id -> {
+            var color = MobCategoryColor.of(entityType.getCategory());
             return new EntityTypesProperties(color, false);
         });
     }
 
     public static void load() {
+        // Initialisation par défaut de toutes les entités chargées
         for (EntityType<?> entityType : Registries.getAllEntityTypes()) {
             getOrCreateEntityProperties(entityType);
         }
@@ -134,18 +141,11 @@ public class ConfigManager {
                     JsonObject entityObj = element.getAsJsonObject();
                     String entityId = entityObj.get("entity").getAsString();
 
-                    EntityType<?> entityType = null;
-                    for (EntityType<?> type : outlinedEntityTypes.keySet()) {
-                        // En 1.20.1, récupération via BuiltInRegistries
-                        if (BuiltInRegistries.ENTITY_TYPE.getKey(type).toString().equals(entityId)) {
-                            entityType = type;
-                            break;
-                        }
-                    }
-
+                    // Conversion dynamique : permet de vérifier si l'entité existe toujours
+                    // (utile si un mod a été retiré, mais on garde la config quand même)
+                    EntityType<?> entityType = getEntityTypeFromString(entityId);
                     if (entityType == null) {
-                        System.err.printf("[reentityoutliner] No match found for entity: %s%n", entityId);
-                        continue;
+                        System.err.printf("[reentityoutliner] Note: Entity %s not found in registry (mod missing?). Keeping config anyway.%n", entityId);
                     }
 
                     JsonObject colorObj = entityObj.getAsJsonObject("color");
@@ -153,11 +153,9 @@ public class ConfigManager {
                     MobCategoryColor color = MobCategoryColor.valueOf(colorName);
 
                     boolean outlined = entityObj.has("outlined") && entityObj.get("outlined").getAsBoolean();
-                    var settings = ConfigManager.getOrCreateEntityProperties(entityType);
-                    if (settings != null) {
-                        settings.color = color;
-                        settings.outlined = outlined;
-                    }
+                    
+                    // On insère directement avec l'ID en String
+                    outlinedEntityTypes.put(entityId, new EntityTypesProperties(color, outlined));
                 }
             }
         } catch (Exception ex) {
