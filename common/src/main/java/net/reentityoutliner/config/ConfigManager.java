@@ -72,22 +72,29 @@ public class ConfigManager {
 
         for (var entry : outlinedEntityTypes.entrySet()) {
             EntityType<?> entityType = entry.getKey();
+            
+            System.out.println("ReEntityOutliner Debug : " + entityType.toString());
             var settings = entry.getValue();
+            if (settings != null) {
+                JsonObject entityObj = new JsonObject();
+                // En 1.20.1, on passe par BuiltInRegistries pour récupérer le nom de l'entité
+                entityObj.addProperty("entity", BuiltInRegistries.ENTITY_TYPE.getKey(entityType).toString());
 
-            JsonObject entityObj = new JsonObject();
-            // En 1.20.1, on passe par BuiltInRegistries pour récupérer le nom de l'entité
-            entityObj.addProperty("entity", BuiltInRegistries.ENTITY_TYPE.getKey(entityType).toString());
+                JsonObject colorObj = new JsonObject();
+                colorObj.addProperty("name", settings.color.name());
+                colorObj.addProperty("r", settings.color.red);
+                colorObj.addProperty("g", settings.color.green);
+                colorObj.addProperty("b", settings.color.blue);
+                entityObj.add("color", colorObj);
 
-            JsonObject colorObj = new JsonObject();
-            colorObj.addProperty("name", settings.color.name());
-            colorObj.addProperty("r", settings.color.red);
-            colorObj.addProperty("g", settings.color.green);
-            colorObj.addProperty("b", settings.color.blue);
-            entityObj.add("color", colorObj);
+                entityObj.addProperty("outlined", settings.outlined);
 
-            entityObj.addProperty("outlined", settings.outlined);
-
-            outlinedEntitiesArray.add(entityObj);
+                outlinedEntitiesArray.add(entityObj);
+            }
+            else
+            {
+                System.out.println("ReEntityOutliner Debug : Settings null for " + entityType.toString());
+            }
         }
 
         config.add("outlinedEntities", outlinedEntitiesArray);
