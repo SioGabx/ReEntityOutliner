@@ -87,20 +87,21 @@ public class ConfigManager {
         for (var entry : outlinedEntityTypes.entrySet()) {
             EntityType<?> entityType = entry.getKey();
             var settings = entry.getValue();
+            if (settings != null) {
+                JsonObject entityObj = new JsonObject();
+                entityObj.addProperty("entity", EntityType.getKey(entityType).toString());
 
-            JsonObject entityObj = new JsonObject();
-            entityObj.addProperty("entity", EntityType.getKey(entityType).toString());
+                JsonObject colorObj = new JsonObject();
+                colorObj.addProperty("name", settings.color.name());
+                colorObj.addProperty("r", settings.color.red);
+                colorObj.addProperty("g", settings.color.green);
+                colorObj.addProperty("b", settings.color.blue);
+                entityObj.add("color", colorObj);
 
-            JsonObject colorObj = new JsonObject();
-            colorObj.addProperty("name", settings.color.name());
-            colorObj.addProperty("r", settings.color.red);
-            colorObj.addProperty("g", settings.color.green);
-            colorObj.addProperty("b", settings.color.blue);
-            entityObj.add("color", colorObj);
+                entityObj.addProperty("outlined", settings.outlined);
 
-            entityObj.addProperty("outlined", settings.outlined);
-
-            outlinedEntitiesArray.add(entityObj);
+                outlinedEntitiesArray.add(entityObj);
+            }
         }
 
         config.add("outlinedEntities", outlinedEntitiesArray);
