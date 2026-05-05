@@ -12,5 +12,6 @@
     "button.re-entity-outliner.off": "Désactiver",
     "gui.re-entity-outliner.no_results": "Aucun résultat",
     "gui.re-entity-outliner.outline.now-on": "%s activé",
-    "gui.re-entity-outliner.outline.now-off": "%s désactivé"
+    "gui.re-entity-outliner.outline.now-off": "%s désactivé",
+    "gui.re-entity-outliner.search_hint": "Rechercher des entités..."
 }

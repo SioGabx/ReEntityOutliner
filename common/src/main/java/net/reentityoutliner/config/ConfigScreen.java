@@ -4,27 +4,23 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.reentityoutliner.Constants;
+import net.reentityoutliner.util.EntitySearcher;
+
 import org.jetbrains.annotations.NotNull;
 
-import java.io.Console;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
 import static net.reentityoutliner.config.ConfigManager.*;
-import static net.reentityoutliner.util.Registries.getAllEntityTypes;
 
 public class ConfigScreen extends Screen {
     private EditBox searchField;
-    public static List<EntityType<?>> allEntities;
-    private static String searchText = "";
+    private static String searchText = "*";
     public static boolean groupByCategory = true;
     public static EntityListWidget list;
     private final Screen parent;
@@ -37,17 +33,30 @@ public class ConfigScreen extends Screen {
     @Override
     protected void init() {
         Constants.LOG.info("Init config screen");
-        if (allEntities == null) {
-            initializeEntities();
-        }
+
+        EntitySearcher.initializeEntities();
 
         final int margin = 35;
 
         // Search bar
-        searchField = new EditBox(this.font, this.width / 2 - 100, 6, 200, 20, Component.literal(searchText));
+        searchField = new EditBox(this.font, this.width / 2 - 100, 6, 200, 20, Component.literal(searchText)) {
+            @Override
+            public void onClick(double mouseX, double mouseY) {
+                // Appelle d'abord le comportement de base pour que le clic fonctionne
+                super.onClick(mouseX, mouseY);
+
+                // Ta logique personnalisée
+                if (this.getValue().equals("*")) {
+                    this.setCursorPosition(0);
+                    this.setHighlightPos(0);
+                }
+            }
+        };
         searchField.setValue(searchText);
+        searchField.setHint(Component.translatable("gui.re-entity-outliner.search_hint"));
         searchField.setResponder(this::onSearchFieldUpdate);
-        //searchField.setBordered(true);
+
+        // searchField.setBordered(true);
 
         this.addRenderableWidget(searchField);
 
@@ -65,108 +74,86 @@ public class ConfigScreen extends Screen {
 
         // Category Toggle Button
         this.addRenderableWidget(Button.builder(
-                        Component.translatable(groupByCategory ? "button.re-entity-outliner.categories" : "button.re-entity-outliner.no-categories"),
-                        (button) -> {
-                            groupByCategory = !groupByCategory;
-                            this.onSearchFieldUpdate(this.searchField.getValue());
-                            button.setMessage(Component.translatable(groupByCategory ? "button.re-entity-outliner.categories" : "button.re-entity-outliner.no-categories"));
-                        })
+                Component.translatable(groupByCategory ? "button.re-entity-outliner.categories"
+                        : "button.re-entity-outliner.no-categories"),
+                (button) -> {
+                    groupByCategory = !groupByCategory;
+                    this.onSearchFieldUpdate(this.searchField.getValue());
+                    button.setMessage(Component.translatable(groupByCategory ? "button.re-entity-outliner.categories"
+                            : "button.re-entity-outliner.no-categories"));
+                })
                 .bounds(buttonInterval, buttonY, buttonWidth, buttonHeight)
                 .build());
 
         // Deselect Button
         this.addRenderableWidget(Button.builder(
-                        Component.translatable("button.re-entity-outliner.deselect"),
-                        (button) -> {
-                            List<EntityType<?>> currentResults = getSearchResults(this.searchField.getValue());
+                Component.translatable("button.re-entity-outliner.deselect"),
+                (button) -> {
+                    List<EntityType<?>> currentResults = EntitySearcher.getSearchResults(this.searchField.getValue());
                     for (EntityType<?> entityType : currentResults) {
                         var settings = ConfigManager.getOrCreateEntityProperties(entityType);
-                        if (settings != null) settings.outlined = false;
+                        if (settings != null)
+                            settings.outlined = false;
                     }
-                     double previousScroll = list.getScrollAmount();
-                            this.onSearchFieldUpdate(this.searchField.getValue());
-                            list.setScrollAmount(previousScroll);
-                        })
+                    double previousScroll = list.getScrollAmount();
+                    this.onSearchFieldUpdate(this.searchField.getValue());
+                    list.setScrollAmount(previousScroll);
+                })
                 .bounds(buttonInterval + (buttonWidth + buttonInterval), buttonY, buttonWidth, buttonHeight)
                 .build());
 
         // Select Button
         this.addRenderableWidget(Button.builder(
-                        Component.translatable("button.re-entity-outliner.select"),
-                        (button) -> {
-                            List<EntityType<?>> currentResults = getSearchResults(this.searchField.getValue());
+                Component.translatable("button.re-entity-outliner.select"),
+                (button) -> {
+                    List<EntityType<?>> currentResults = EntitySearcher.getSearchResults(this.searchField.getValue());
                     for (EntityType<?> entityType : currentResults) {
-                     var settings = ConfigManager.getOrCreateEntityProperties(entityType);
-                                    if (settings != null) settings.outlined = true;
-                                }
-                            double previousScroll = list.getScrollAmount();
-                            this.onSearchFieldUpdate(this.searchField.getValue());
-                            list.setScrollAmount(previousScroll);
-                        })
+                        var settings = ConfigManager.getOrCreateEntityProperties(entityType);
+                        if (settings != null)
+                            settings.outlined = true;
+                    }
+                    double previousScroll = list.getScrollAmount();
+                    this.onSearchFieldUpdate(this.searchField.getValue());
+                    list.setScrollAmount(previousScroll);
+                })
                 .bounds(buttonInterval + (buttonWidth + buttonInterval) * 2, buttonY, buttonWidth, buttonHeight)
                 .build());
 
         // Master Toggle Button
         this.addRenderableWidget(Button.builder(
-                        Component.translatable(isOutliningEntities() ? "button.re-entity-outliner.on" : "button.re-entity-outliner.off"),
-                        (button) -> {
-                            setOutliningEntities(!isOutliningEntities());
-                            button.setMessage(Component.translatable(isOutliningEntities() ? "button.re-entity-outliner.on" : "button.re-entity-outliner.off"));
-                        })
+                Component.translatable(
+                        isOutliningEntities() ? "button.re-entity-outliner.on" : "button.re-entity-outliner.off"),
+                (button) -> {
+                    setOutliningEntities(!isOutliningEntities());
+                    button.setMessage(Component.translatable(
+                            isOutliningEntities() ? "button.re-entity-outliner.on" : "button.re-entity-outliner.off"));
+                })
                 .bounds(buttonInterval + (buttonWidth + buttonInterval) * 3, buttonY, buttonWidth, buttonHeight)
                 .build());
 
         // Done Button
         this.addRenderableWidget(Button.builder(
-                        Component.translatable("button.re-entity-outliner.done"),
-                        (button) -> {
-                            if (this.minecraft != null) this.minecraft.setScreen(this.parent);
-                        })
+                Component.translatable("button.re-entity-outliner.done"),
+                (button) -> {
+                    if (this.minecraft != null)
+                        this.minecraft.setScreen(this.parent);
+                })
                 .bounds(buttonInterval + (buttonWidth + buttonInterval) * 4, buttonY, buttonWidth, buttonHeight)
                 .build());
 
         this.setInitialFocus(this.searchField);
+        if (this.searchField.getValue() == "*") {
+            this.searchField.setCursorPosition(0);
+             this.searchField.setHighlightPos(0);
+        }
         this.onSearchFieldUpdate(this.searchField.getValue());
-    }
-
-private List<EntityType<?>> getSearchResults(String text) {
-        String query = text.toLowerCase().trim();
-        List<EntityType<?>> results = new ArrayList<>();
-        
-        if (query.isEmpty()) {
-            return new ArrayList<>(allEntities);
-        }
-
-        boolean searchByMod = query.startsWith("@");
-        String filter = searchByMod ? query.substring(1) : query;
-
-        for (EntityType<?> entityType : allEntities) {
-            boolean matches;
-            
-            if (searchByMod) {
-                // Recherche dans le Mod ID (namespace)
-                ResourceLocation id = BuiltInRegistries.ENTITY_TYPE.getKey(entityType);
-                //System.out.println("ReEntityOutliner: " + id.getNamespace());
-                //Constants.LOG.info("ReEntityOutliner: " + id.getNamespace());
-                matches = id.getNamespace().toLowerCase().contains(filter);
-            } else {
-                // Recherche classique dans le nom (avec .contains au lieu du préfixe exact, beaucoup plus permissif)
-                String name = entityType.getDescription().getString().toLowerCase();
-                matches = name.contains(filter);
-            }
-
-            if (matches) {
-                results.add(entityType);
-            }
-        }
-        return results;
     }
 
     private void onSearchFieldUpdate(String text) {
         searchText = text;
         list.clearListEntries();
 
-        List<EntityType<?>> results = getSearchResults(text);
+        List<EntityType<?>> results = EntitySearcher.getSearchResults(text);
 
         if (!results.isEmpty()) {
             if (groupByCategory) {
@@ -197,12 +184,6 @@ private List<EntityType<?>> getSearchResults(String text) {
         }
     }
 
-    private void initializeEntities() {
-        allEntities = new ArrayList<>(getAllEntityTypes());
-        // On trie une seule fois au chargement
-        allEntities.sort(Comparator.comparing(e -> e.getDescription().getString()));
-    }
-
     @Override
     public void removed() {
         save();
@@ -210,13 +191,6 @@ private List<EntityType<?>> getSearchResults(String text) {
 
     @Override
     public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        /*
-        this.renderBackground(guiGraphics); // Fond sombre de Minecraft
-
-        list.render(guiGraphics, mouseX, mouseY, partialTick);
-        searchField.render(guiGraphics, mouseX, mouseY, partialTick);
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
-         */
         this.renderBackground(guiGraphics);
         list.render(guiGraphics, mouseX, mouseY, partialTick);
         super.render(guiGraphics, mouseX, mouseY, partialTick);
@@ -225,6 +199,7 @@ private List<EntityType<?>> getSearchResults(String text) {
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        return list.mouseDragged(mouseX, mouseY, button, dragX, dragY) || super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+        return list.mouseDragged(mouseX, mouseY, button, dragX, dragY)
+                || super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
     }
 }

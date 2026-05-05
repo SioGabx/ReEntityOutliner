@@ -12,5 +12,6 @@
     "button.re-entity-outliner.off": "Toggled Off",
     "gui.re-entity-outliner.no_results": "No results",
     "gui.re-entity-outliner.outline.now-on": "%s is now on",
-    "gui.re-entity-outliner.outline.now-off": "%s is now off"
+    "gui.re-entity-outliner.outline.now-off": "%s is now off",
+    "gui.re-entity-outliner.search_hint": "Search entities..."
 }
