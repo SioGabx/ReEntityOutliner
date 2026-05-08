@@ -20,7 +20,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class EntityListWidget extends ContainerObjectSelectionList<EntityListWidget.Entry> {
 
@@ -89,7 +91,7 @@ public class EntityListWidget extends ContainerObjectSelectionList<EntityListWid
             
             Component tooltipText = Component.empty()
                     .append(entityType.getDescription())
-                    .append(Component.literal("\n" + entityId.toString()).withStyle(ChatFormatting.DARK_GRAY));
+                    .append(Component.literal("\n" + entityId).withStyle(ChatFormatting.DARK_GRAY));
             cb.setTooltip(Tooltip.create(tooltipText));
 
             ColorWidget cw = new ColorWidget(width / 2 + 75, 0, 75, 20, Component.empty(), entityType);
@@ -112,8 +114,7 @@ public class EntityListWidget extends ContainerObjectSelectionList<EntityListWid
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
             var settings = ConfigManager.getOrCreateEntityProperties(this.entityType);
             if (settings == null) {
-                System.out.println("ReEntityOutliner Debug : Settings null for " + entityType.toString());
-                Constants.LOG.info("ReEntityOutliner Debug : Settings null for " + entityType.toString());
+                Constants.LOG.info("ReEntityOutliner Debug : Settings null for {}", entityType);
                 return false;
             }
 
@@ -149,7 +150,12 @@ public class EntityListWidget extends ContainerObjectSelectionList<EntityListWid
         public HeaderEntry(MobCategory category, Font font) {
             this.font = font;
             if (category != null) {
-                this.title = StringUtils.capitalize(category.getName());
+                String title = category.getName();
+                //to Pascal_Case
+                String output = Arrays.stream(title.split("_"))
+                        .map(word -> word.substring(0, 1).toUpperCase() + word.substring(1).toLowerCase())
+                        .collect(Collectors.joining("_"));
+                this.title = StringUtils.capitalize(output);
             } else {
                 this.title = Component.translatable("gui.re-entity-outliner.no_results").getString();
             }

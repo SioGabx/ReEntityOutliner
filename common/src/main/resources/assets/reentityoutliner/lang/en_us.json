@@ -1,5 +1,5 @@
 {
-    "key.category.re-entity-outliner.title" : "Re:Entity Outliner",
+    "key.category.re-entity-outliner.title": "Re:Entity Outliner",
     "key.re-entity-outliner.selector": "Open Entity Selector",
     "key.re-entity-outliner.outline": "Toggle Entity Outline",
     "title.re-entity-outliner.selector": "Entity Selector",
@@ -13,5 +13,13 @@
     "gui.re-entity-outliner.no_results": "No results",
     "gui.re-entity-outliner.outline.now-on": "%s is now on",
     "gui.re-entity-outliner.outline.now-off": "%s is now off",
-    "gui.re-entity-outliner.search_hint": "Search entities..."
+    "gui.re-entity-outliner.search_hint": "Search entities...",
+    "gui.re-entity-outliner.search_help.title": "How to Search",
+    "gui.re-entity-outliner.search_help.exact": "%s : Exact match",
+    "gui.re-entity-outliner.search_help.contains": "%s : Contains 'zombie'",
+    "gui.re-entity-outliner.search_help.start-with": "%s : Starts with 'zombie'",
+    "gui.re-entity-outliner.search_help.end-with": "%s : Ends with 'zombie'",
+    "gui.re-entity-outliner.search_help.mod": "%s : Filter by Mod",
+    "gui.re-entity-outliner.search_help.category": "%s : Filter by Category",
+    "gui.re-entity-outliner.search_help.example": "Example: %s"
 }

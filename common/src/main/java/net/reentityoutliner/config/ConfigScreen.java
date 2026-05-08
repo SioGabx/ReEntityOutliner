@@ -1,10 +1,13 @@
 package net.reentityoutliner.config;
 
+import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.reentityoutliner.Constants;
@@ -60,6 +63,40 @@ public class ConfigScreen extends Screen {
 
         this.addRenderableWidget(searchField);
 
+
+        // Bouton d'aide (?) à côté de la barre de recherche
+        Style styleTitre = Style.EMPTY.withColor(ChatFormatting.GOLD).withBold(true);
+        Style styleArg = Style.EMPTY.withColor(ChatFormatting.YELLOW);
+        Style styleExemple = Style.EMPTY.withColor(ChatFormatting.GRAY);
+        this.addRenderableWidget(Button.builder(Component.literal("?"), (button) -> Util.getPlatform().openUri("https://github.com/SioGabx/ReEntityOutliner/wiki/How-to-search"))
+                .bounds(this.width / 2 + 105, 6, 20, 20) // Positionné juste à droite de la barre (200/2 + 5px d'écart)
+                .tooltip(net.minecraft.client.gui.components.Tooltip.create(
+                        Component.empty()
+                                .append(Component.translatable("gui.re-entity-outliner.search_help.title").withStyle(styleTitre))
+                                .append("\n\n")
+                                .append(Component.translatable("gui.re-entity-outliner.search_help.exact",
+                                        Component.literal("zombie").withStyle(styleArg)))
+                                .append("\n")
+                                .append(Component.translatable("gui.re-entity-outliner.search_help.end-with",
+                                        Component.literal("zombie*").withStyle(styleArg)))
+                                .append("\n")
+                                .append(Component.translatable("gui.re-entity-outliner.search_help.start-with",
+                                        Component.literal("*zombie").withStyle(styleArg)))
+                                .append("\n")
+                                .append(Component.translatable("gui.re-entity-outliner.search_help.contains",
+                                        Component.literal("*zombie*").withStyle(styleArg)))
+                                .append("\n")
+                                .append(Component.translatable("gui.re-entity-outliner.search_help.mod",
+                                        Component.literal("@mod").withStyle(styleArg)))
+                                .append("\n")
+                                .append(Component.translatable("gui.re-entity-outliner.search_help.category",
+                                        Component.literal("#category").withStyle(styleArg)))
+                                .append("\n")
+                                .append(Component.translatable("gui.re-entity-outliner.search_help.example",
+                                        Component.literal("@minecraft #monster *zombie*")).withStyle(styleExemple))
+                ))
+                .build());
+
         // Scroll list
         // Minecraft, Largeur, Hauteur, Top, Bottom, ItemHeight
         list = new EntityListWidget(this.minecraft, this.width, this.height, margin, this.height - margin, 25);
@@ -74,77 +111,77 @@ public class ConfigScreen extends Screen {
 
         // Category Toggle Button
         this.addRenderableWidget(Button.builder(
-                Component.translatable(groupByCategory ? "button.re-entity-outliner.categories"
-                        : "button.re-entity-outliner.no-categories"),
-                (button) -> {
-                    groupByCategory = !groupByCategory;
-                    this.onSearchFieldUpdate(this.searchField.getValue());
-                    button.setMessage(Component.translatable(groupByCategory ? "button.re-entity-outliner.categories"
-                            : "button.re-entity-outliner.no-categories"));
-                })
+                        Component.translatable(groupByCategory ? "button.re-entity-outliner.categories"
+                                : "button.re-entity-outliner.no-categories"),
+                        (button) -> {
+                            groupByCategory = !groupByCategory;
+                            this.onSearchFieldUpdate(this.searchField.getValue());
+                            button.setMessage(Component.translatable(groupByCategory ? "button.re-entity-outliner.categories"
+                                    : "button.re-entity-outliner.no-categories"));
+                        })
                 .bounds(buttonInterval, buttonY, buttonWidth, buttonHeight)
                 .build());
 
         // Deselect Button
         this.addRenderableWidget(Button.builder(
-                Component.translatable("button.re-entity-outliner.deselect"),
-                (button) -> {
-                    List<EntityType<?>> currentResults = EntitySearcher.getSearchResults(this.searchField.getValue());
-                    for (EntityType<?> entityType : currentResults) {
-                        var settings = ConfigManager.getOrCreateEntityProperties(entityType);
-                        if (settings != null)
-                            settings.outlined = false;
-                    }
-                    double previousScroll = list.getScrollAmount();
-                    this.onSearchFieldUpdate(this.searchField.getValue());
-                    list.setScrollAmount(previousScroll);
-                })
+                        Component.translatable("button.re-entity-outliner.deselect"),
+                        (button) -> {
+                            List<EntityType<?>> currentResults = EntitySearcher.getSearchResults(this.searchField.getValue());
+                            for (EntityType<?> entityType : currentResults) {
+                                var settings = ConfigManager.getOrCreateEntityProperties(entityType);
+                                if (settings != null)
+                                    settings.outlined = false;
+                            }
+                            double previousScroll = list.getScrollAmount();
+                            this.onSearchFieldUpdate(this.searchField.getValue());
+                            list.setScrollAmount(previousScroll);
+                        })
                 .bounds(buttonInterval + (buttonWidth + buttonInterval), buttonY, buttonWidth, buttonHeight)
                 .build());
 
         // Select Button
         this.addRenderableWidget(Button.builder(
-                Component.translatable("button.re-entity-outliner.select"),
-                (button) -> {
-                    List<EntityType<?>> currentResults = EntitySearcher.getSearchResults(this.searchField.getValue());
-                    for (EntityType<?> entityType : currentResults) {
-                        var settings = ConfigManager.getOrCreateEntityProperties(entityType);
-                        if (settings != null)
-                            settings.outlined = true;
-                    }
-                    double previousScroll = list.getScrollAmount();
-                    this.onSearchFieldUpdate(this.searchField.getValue());
-                    list.setScrollAmount(previousScroll);
-                })
+                        Component.translatable("button.re-entity-outliner.select"),
+                        (button) -> {
+                            List<EntityType<?>> currentResults = EntitySearcher.getSearchResults(this.searchField.getValue());
+                            for (EntityType<?> entityType : currentResults) {
+                                var settings = ConfigManager.getOrCreateEntityProperties(entityType);
+                                if (settings != null)
+                                    settings.outlined = true;
+                            }
+                            double previousScroll = list.getScrollAmount();
+                            this.onSearchFieldUpdate(this.searchField.getValue());
+                            list.setScrollAmount(previousScroll);
+                        })
                 .bounds(buttonInterval + (buttonWidth + buttonInterval) * 2, buttonY, buttonWidth, buttonHeight)
                 .build());
 
         // Master Toggle Button
         this.addRenderableWidget(Button.builder(
-                Component.translatable(
-                        isOutliningEntities() ? "button.re-entity-outliner.on" : "button.re-entity-outliner.off"),
-                (button) -> {
-                    setOutliningEntities(!isOutliningEntities());
-                    button.setMessage(Component.translatable(
-                            isOutliningEntities() ? "button.re-entity-outliner.on" : "button.re-entity-outliner.off"));
-                })
+                        Component.translatable(
+                                isOutliningEntities() ? "button.re-entity-outliner.on" : "button.re-entity-outliner.off"),
+                        (button) -> {
+                            setOutliningEntities(!isOutliningEntities());
+                            button.setMessage(Component.translatable(
+                                    isOutliningEntities() ? "button.re-entity-outliner.on" : "button.re-entity-outliner.off"));
+                        })
                 .bounds(buttonInterval + (buttonWidth + buttonInterval) * 3, buttonY, buttonWidth, buttonHeight)
                 .build());
 
         // Done Button
         this.addRenderableWidget(Button.builder(
-                Component.translatable("button.re-entity-outliner.done"),
-                (button) -> {
-                    if (this.minecraft != null)
-                        this.minecraft.setScreen(this.parent);
-                })
+                        Component.translatable("button.re-entity-outliner.done"),
+                        (button) -> {
+                            if (this.minecraft != null)
+                                this.minecraft.setScreen(this.parent);
+                        })
                 .bounds(buttonInterval + (buttonWidth + buttonInterval) * 4, buttonY, buttonWidth, buttonHeight)
                 .build());
 
         this.setInitialFocus(this.searchField);
-        if (this.searchField.getValue() == "*") {
+        if (this.searchField.getValue().equals("*")) {
             this.searchField.setCursorPosition(0);
-             this.searchField.setHighlightPos(0);
+            this.searchField.setHighlightPos(0);
         }
         this.onSearchFieldUpdate(this.searchField.getValue());
     }
