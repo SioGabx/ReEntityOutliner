@@ -14,6 +14,7 @@ import net.reentityoutliner.util.EntityTypesProperties;
 import net.reentityoutliner.util.Registries;
 import net.reentityoutliner.util.MobCategoryColor;
 import net.minecraft.world.entity.EntityType;
+import org.jspecify.annotations.NonNull;
 import org.lwjgl.glfw.GLFW;
 
 import java.io.IOException;
@@ -78,18 +79,7 @@ public class ConfigManager {
             var settings = entry.getValue();
 
             if (settings != null) {
-                JsonObject entityObj = new JsonObject();
-                // La clé est déjà un String, plus besoin de conversion ici
-                entityObj.addProperty("entity", entityId);
-
-                JsonObject colorObj = new JsonObject();
-                colorObj.addProperty("name", settings.color.name());
-                colorObj.addProperty("r", settings.color.red);
-                colorObj.addProperty("g", settings.color.green);
-                colorObj.addProperty("b", settings.color.blue);
-                entityObj.add("color", colorObj);
-
-                entityObj.addProperty("outlined", settings.outlined);
+                JsonObject entityObj = getJsonObject(entityId, settings);
 
                 outlinedEntitiesArray.add(entityObj);
             } else {
@@ -106,6 +96,22 @@ public class ConfigManager {
             Constants.LOG.error("Failed to save reentityoutliner config");
             Constants.LOG.error(ex.getMessage());
         }
+    }
+
+    private static @NonNull JsonObject getJsonObject(String entityId, EntityTypesProperties settings) {
+        JsonObject entityObj = new JsonObject();
+        // La clé est déjà un String, plus besoin de conversion ici
+        entityObj.addProperty("entity", entityId);
+
+        JsonObject colorObj = new JsonObject();
+        colorObj.addProperty("name", settings.color.name());
+        colorObj.addProperty("r", settings.color.red);
+        colorObj.addProperty("g", settings.color.green);
+        colorObj.addProperty("b", settings.color.blue);
+        entityObj.add("color", colorObj);
+
+        entityObj.addProperty("outlined", settings.outlined);
+        return entityObj;
     }
 
     // Méthode pour obtenir le type EntityType dynamiquement depuis un String
