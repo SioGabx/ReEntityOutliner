@@ -12,5 +12,14 @@
     "button.re-entity-outliner.off": "Désactiver",
     "gui.re-entity-outliner.no_results": "Aucun résultat",
     "gui.re-entity-outliner.outline.now-on": "%s activé",
-    "gui.re-entity-outliner.outline.now-off": "%s désactivé"
+    "gui.re-entity-outliner.outline.now-off": "%s désactivé",
+    "gui.re-entity-outliner.search_hint": "Rechercher des entités...",
+    "gui.re-entity-outliner.search_help.title": "Comment chercher",
+    "gui.re-entity-outliner.search_help.exact": "%s : Correspondance exacte",
+    "gui.re-entity-outliner.search_help.contains": "%s : Contient 'zombie'",
+    "gui.re-entity-outliner.search_help.start-with": "%s : Commence par 'zombie'",
+    "gui.re-entity-outliner.search_help.end-with": "%s : Finit par 'zombie'",
+    "gui.re-entity-outliner.search_help.mod": "%s : Filtrer par Mod",
+    "gui.re-entity-outliner.search_help.category": "%s : Filtrer par Catégorie",
+    "gui.re-entity-outliner.search_help.example": "Exemple : %s"
 }

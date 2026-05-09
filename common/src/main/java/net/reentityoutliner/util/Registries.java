@@ -30,10 +30,4 @@ public class Registries {
                 .filter(type -> !isBanned(BuiltInRegistries.ENTITY_TYPE.getKey(type)))
                 .collect(Collectors.toList());
     }
-
-    public static List<Identifier> getAllEntityTypeIds() {
-        return BuiltInRegistries.ENTITY_TYPE.keySet().stream()
-                .filter(id -> !isBanned(id))
-                .collect(Collectors.toList());
-    }
 }
