@@ -105,7 +105,10 @@ public class EntityListWidget extends ContainerObjectSelectionList<EntityListWid
 
         @Override
         public void renderContent(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, boolean hovered, float delta) {
-            this.checkbox.setY(this.getContentY());
+            int widgetHeight = 20;
+            int centerY = this.getContentY() + (this.getContentHeight() - widgetHeight) / 2;
+            this.checkbox.setY(centerY + 1);
+
             this.checkbox.render(guiGraphics, mouseX, mouseY, delta);
             if (this.children.contains(this.color)) {
                 this.color.setY(this.getContentY());
