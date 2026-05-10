@@ -1,0 +1,103 @@
+name: Publish release
+
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v5
+
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+
+      # 📦 Build
+      - name: Build with Gradle
+        run: ./gradlew build
+
+      # 🧠 Get versions
+      - name: Read properties
+        run: |
+          VERSION=$(grep "^version=" gradle.properties | cut -d'=' -f2)
+          MC_VERSION=$(grep "^minecraft_version=" gradle.properties | cut -d'=' -f2)
+
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "MC_VERSION=$MC_VERSION" >> $GITHUB_ENV
+          echo "BRANCH=${GITHUB_REF_NAME}" >> $GITHUB_ENV
+
+      # 🏷️ Build tag
+      - name: Build tag
+        run: |
+          if [ "$BRANCH" = "main" ]; then
+            TAG="v$VERSION"
+          else
+            TAG="mc_$BRANCH-v$VERSION"
+          fi
+          echo "TAG=$TAG" >> $GITHUB_ENV
+
+      # 🔍 Debug jars
+      - name: Debug jars
+        run: |
+          echo "=== Fabric ==="
+          ls -l fabric/build/libs || true
+          echo "=== Forge ==="
+          ls -l forge/build/libs || true
+          echo "=== NeoForge ==="
+          ls -l neoforge/build/libs || true
+
+      # 🚀 Create or update release
+      - name: Create or update GitHub Release
+        run: |
+          echo "Using tag: $TAG"
+
+          # Initialisation d'une variable pour stocker la liste des fichiers valides trouvés
+          FILES=""
+          
+          # Boucle sur les différents loaders
+          for loader in fabric forge neoforge; do
+            # Construction du nom de fichier exact attendu
+            EXPECTED_NAME="reentityoutliner-${loader}-${MC_VERSION}-${VERSION}.jar"
+            
+            # Recherche du fichier dans le bon dossier, en ignorant la casse avec -iname
+            FOUND=$(find "$loader/build/libs" -maxdepth 1 -type f -iname "$EXPECTED_NAME" 2>/dev/null || true)
+            
+            if [ -n "$FOUND" ]; then
+              echo "✅ Fichier trouvé : $FOUND"
+              # Ajout des fichiers trouvés à la variable, sur une seule ligne
+              FILES="$FILES $(echo $FOUND | tr '\n' ' ')"
+            else
+              echo "⚠️ Fichier introuvable (ignore case) : $EXPECTED_NAME dans $loader/build/libs/"
+            fi
+          done
+
+          # Nettoyage des espaces de la liste des fichiers
+          FILES=$(echo $FILES | xargs)
+
+          if [ -z "$FILES" ]; then
+            echo "❌ Aucun fichier JAR trouvé correspondant aux noms attendus !"
+            exit 1
+          fi
+
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "La release existe → Upload des assets"
+            gh release upload "$TAG" $FILES --clobber
+          else
+            echo "Création d'une nouvelle release"
+            gh release create "$TAG" $FILES --title="$TAG"
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
