@@ -14,7 +14,7 @@ import static net.reentityoutliner.config.ConfigManager.isOutliningEntities;
 
 @Mixin(Minecraft.class)
 public class MixinMinecraft {
-    
+
     @Inject(at = @At("TAIL"), method = "<init>")
     private void init(CallbackInfo info) {
         Constants.LOG.info("Loaded {}", Constants.MOD_NAME);
@@ -24,7 +24,7 @@ public class MixinMinecraft {
     @Inject(at = @At("HEAD"), method = "shouldEntityAppearGlowing(Lnet/minecraft/world/entity/Entity;)Z", cancellable = true)
     public void onShouldEntityAppearGlowing(Entity entity, CallbackInfoReturnable<Boolean> cir) {
         if (isOutliningEntities()){
-            var settings = ConfigManager.getEntityProperties(entity.getType());
+            var settings = ConfigManager.getOrCreateEntityProperties(entity.getType());
             if (settings != null && settings.outlined) {
                 cir.setReturnValue(true);
                 cir.cancel();

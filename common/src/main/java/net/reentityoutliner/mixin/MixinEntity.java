@@ -20,7 +20,7 @@ public abstract class MixinEntity {
     @Inject(at = @At("HEAD"), method = "getTeamColor()I", cancellable = true)
     private void onGetTeamColor(CallbackInfoReturnable<Integer> info) {
         if (isOutliningEntities()) {
-            var settings = ConfigManager.getEntityProperties(this.getType());
+            var settings = ConfigManager.getOrCreateEntityProperties(this.getType());
             if (settings != null && settings.outlined) {
                 //Get generic colors for entity
                 int red = settings.color.red;

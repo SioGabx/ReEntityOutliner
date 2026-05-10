@@ -1,5 +1,5 @@
 .\gradlew clean
+.\gradlew genSources
 .\gradlew tasks
 .\gradlew idea
-.\gradlew forge:idea
 pause
