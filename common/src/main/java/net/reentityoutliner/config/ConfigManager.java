@@ -42,7 +42,8 @@ public class ConfigManager {
         if (client.player != null) {
         String message = outliningEntities ? "gui.re-entity-outliner.outline.now-on" : "gui.re-entity-outliner.outline.now-off";
         client.player.displayClientMessage(Component.translatable(message, Constants.MOD_NAME), true);
-        }//{Constants.MOD_NAME} : Component.translatable("gui.re-entity-outliner.outline.now-on")
+        save();
+        }
     }
 
     public static Path ConfigPath = null;
@@ -88,6 +89,7 @@ public class ConfigManager {
             }
         }
 
+        config.addProperty("isOutliningEntities", isOutliningEntities());
         config.add("outlinedEntities", outlinedEntitiesArray);
 
         try {
@@ -141,6 +143,9 @@ public class ConfigManager {
 
             String jsonString = Files.readString(getConfigPath());
             JsonObject config = GSON.fromJson(jsonString, JsonObject.class);
+            if (config != null && config.has("isOutliningEntities")) {
+                outliningEntities = config.getAsJsonPrimitive("isOutliningEntities").getAsBoolean();
+            }
 
             if (config != null && config.has("outlinedEntities")) {
                 JsonArray outlinedEntitiesArray = config.getAsJsonArray("outlinedEntities");
