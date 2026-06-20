@@ -163,7 +163,7 @@ public class ConfigScreen extends Screen {
 
         this.addRenderableWidget(Button.builder(
                         Component.translatable("button.re-entity-outliner.done"),
-                        (_) -> this.minecraft.setScreen(this.parent))
+                        (_) -> this.minecraft.gui.setScreen(this.parent))
                 .size(buttonWidth, buttonHeight)
                 .pos(buttonInterval + (buttonWidth + buttonInterval) * 4, buttonY)
                 .build());

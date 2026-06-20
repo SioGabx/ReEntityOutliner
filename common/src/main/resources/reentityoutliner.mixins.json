@@ -2,7 +2,7 @@
   "required": true,
   "minVersion": "0.8",
   "package": "net.reentityoutliner.mixin",
-  "compatibilityLevel": "JAVA_18",
+  "compatibilityLevel": "JAVA_25",
   "mixins": [
     "MixinEntity"
   ],
@@ -13,6 +13,9 @@
   "server": [],
   "injectors": {
     "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
   }
 }
 

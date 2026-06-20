@@ -36,7 +36,7 @@ public class ReEntityOutliner implements ModInitializer {
         }
 
         while (CONFIG_BIND.consumeClick()) {
-            client.setScreen(new ConfigScreen(null));
+            client.gui.setScreen(new ConfigScreen(null));
         }
     }
 }

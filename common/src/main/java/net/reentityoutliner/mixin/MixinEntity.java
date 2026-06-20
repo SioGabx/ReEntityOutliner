@@ -2,13 +2,17 @@ package net.reentityoutliner.mixin;
 
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.scores.TeamColor;
 import net.reentityoutliner.config.ConfigManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.Optional;
 
 import static net.reentityoutliner.config.ConfigManager.*;
 
@@ -28,13 +32,14 @@ public abstract class MixinEntity {
                 int blue = settings.color.blue;
 
                 //Make outline to the color of the player
-                if (this.getType() == EntityType.PLAYER) {
+                if (this.getType() ==  EntityTypes.PLAYER) {
                     if (((Object)this) instanceof Player player) {
                         var team = player.getTeam();
                         if (team != null) {
-                            var colorValue = team.getColor().getColor();
+                            Optional<TeamColor> TeamColorValue = team.getColor();
+                            var colorValue = TeamColorValue.get();
                             if (colorValue != null) {
-                                int argbInt = colorValue;
+                                int argbInt = colorValue.rgb();
                                 red = (argbInt >> 16) & 0xFF;
                                 green = (argbInt >> 8) & 0xFF;
                                 blue = argbInt & 0xFF;

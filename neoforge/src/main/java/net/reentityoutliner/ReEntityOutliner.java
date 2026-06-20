@@ -52,7 +52,7 @@ public class ReEntityOutliner {
     public void onClientTick(ClientTickEvent.Post event) {
         Minecraft client = Minecraft.getInstance();
         while (CONFIG_BIND.consumeClick()) {
-            client.setScreen(new ConfigScreen(null));
+            client.gui.setScreen(new ConfigScreen(null));
         }
         while (OUTLINE_BIND.consumeClick()) {
             setOutliningEntities(!isOutliningEntities());
