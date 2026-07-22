@@ -29,12 +29,17 @@ public class ConfigManager {
     public static final HashMap<String, EntityTypesProperties> outlinedEntityTypes = new HashMap<>();
 
     private static boolean outliningEntities = false;
+    private static boolean serverDisabled = false;
 
     public static boolean isOutliningEntities() {
-        return outliningEntities;
+        return outliningEntities && !serverDisabled;
     }
 
     public static void setOutliningEntities(boolean value) {
+        if (value && serverDisabled) {
+            return;
+        }
+        
         outliningEntities = value;
         Minecraft client = Minecraft.getInstance();
         if (client.player != null) {
@@ -44,6 +49,13 @@ public class ConfigManager {
         save();
     }
 
+    public static void disableOnServer() {
+        serverDisabled = true;
+    }
+
+    public static void onDisconnect() {
+        serverDisabled = false;
+    }
 
     public static Path ConfigPath = null;
     private static final Gson GSON = new Gson();
@@ -86,7 +98,7 @@ public class ConfigManager {
                 Constants.LOG.info("ReEntityOutliner Debug : Settings null for " + entityId);
             }
         }
-        config.addProperty("isOutliningEntities", isOutliningEntities());
+        config.addProperty("isOutliningEntities", outliningEntities);
         config.add("outlinedEntities", outlinedEntitiesArray);
 
         try {
