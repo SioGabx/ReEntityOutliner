@@ -8,7 +8,8 @@
   ],
   "client": [
     "MixinMinecraft",
-    "MixinEntity"
+    "MixinEntity",
+    "MixinClientCommonPacketListener"
   ],
   "server": [],
   "injectors": {
