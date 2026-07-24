@@ -36,10 +36,9 @@ public abstract class MixinEntity {
                     if (((Object)this) instanceof Player player) {
                         var team = player.getTeam();
                         if (team != null) {
-                            Optional<TeamColor> TeamColorValue = team.getColor();
-                            var colorValue = TeamColorValue.get();
+                            var colorValue = team.getColor().map(teamColor -> teamColor.rgb()).orElse(null);
                             if (colorValue != null) {
-                                int argbInt = colorValue.rgb();
+                                int argbInt = colorValue;
                                 red = (argbInt >> 16) & 0xFF;
                                 green = (argbInt >> 8) & 0xFF;
                                 blue = argbInt & 0xFF;
