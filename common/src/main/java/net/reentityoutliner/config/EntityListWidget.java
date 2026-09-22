@@ -1,5 +1,6 @@
 package net.reentityoutliner.config;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -11,8 +12,10 @@ import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.reentityoutliner.Constants;
@@ -123,14 +126,14 @@ public class EntityListWidget extends ContainerObjectSelectionList<EntityListWid
             //render yourself the tooltips,
             if (this.checkbox.isMouseOver(mouseX, mouseY)) {
                 guiGraphics.requestCursor(CursorTypes.POINTING_HAND);
-
                 guiGraphics.tooltip(
                         Minecraft.getInstance().font,
                         this.tooltipLines,
                         mouseX,
                         mouseY,
                         net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner.INSTANCE,
-                        null
+                        null,
+                        true
                 );
             }
         }
@@ -227,7 +230,14 @@ public class EntityListWidget extends ContainerObjectSelectionList<EntityListWid
         @Override
         public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
             Constants.LOG.info("HeaderEntry mouseClicked");
-            if (event.button() == 0) { // Clic gauche
+            if (event.button() == InputConstants.MOUSE_BUTTON_LEFT) { // Clic gauche
+                //son click button
+                Minecraft.getInstance().getSoundManager().play(
+                        SimpleSoundInstance.forUI(
+                                SoundEvents.UI_BUTTON_CLICK,
+                                1.0F
+                        )
+                );
                 // 1. Déterminer si on doit tout cocher ou tout décocher
                 boolean allChecked = true;
                 for (EntityListWidget.Entry entry : ConfigScreen.list.children()) {

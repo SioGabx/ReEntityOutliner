@@ -1,5 +1,6 @@
 package net.reentityoutliner.config;
 
+import com.mojang.blaze3d.Blaze3D;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -9,7 +10,6 @@ import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.network.chat.Style;
-import net.minecraft.util.Util;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.reentityoutliner.Constants;
@@ -17,6 +17,7 @@ import net.reentityoutliner.util.EntitySearcher;
 import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.NonNull;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -66,7 +67,7 @@ public class ConfigScreen extends Screen {
         Style styleTitre = Style.EMPTY.withColor(ChatFormatting.GOLD).withBold(true);
         Style styleArg = Style.EMPTY.withColor(ChatFormatting.YELLOW);
         Style styleExemple = Style.EMPTY.withColor(ChatFormatting.GRAY);
-        this.addRenderableWidget(Button.builder(Component.literal("?"), (_) -> Util.getPlatform().openUri("https://github.com/SioGabx/ReEntityOutliner/wiki/How-to-search"))
+        this.addRenderableWidget(Button.builder(Component.literal("?"), (_) ->  Blaze3D.openUri(URI.create("https://github.com/SioGabx/ReEntityOutliner/wiki/How-to-search")))
                 .bounds(this.width / 2 + 105, 6, 20, 20) // Positionné juste à droite de la barre (200/2 + 5px d'écart)
                 .tooltip(net.minecraft.client.gui.components.Tooltip.create(
                         Component.empty()

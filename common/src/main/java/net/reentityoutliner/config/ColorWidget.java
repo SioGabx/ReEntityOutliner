@@ -1,5 +1,6 @@
 package net.reentityoutliner.config;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -62,10 +63,10 @@ public class ColorWidget extends Button {
         if (this.isMouseOver(mouseX, mouseY)) {
             this.onPress(event.buttonInfo()); // VANILLA → son + focus OK
             this.playDownSound(Minecraft.getInstance().getSoundManager());
-            if (button == 0) {
+            if (button == InputConstants.MOUSE_BUTTON_LEFT) {
                 this.cycleColor(false);
 
-            } else if (button == 1) {
+            } else if (button == InputConstants.MOUSE_BUTTON_RIGHT) {
                 this.cycleColor(true); // clic droit
             }
             return true;

@@ -16,7 +16,6 @@ import net.reentityoutliner.util.EntityTypesProperties;
 import net.reentityoutliner.util.MobCategoryColor;
 import net.reentityoutliner.util.Registries;
 import org.jspecify.annotations.NonNull;
-import org.lwjgl.glfw.GLFW;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -53,14 +52,14 @@ public class ConfigManager {
 
 
     public static final KeyMapping CONFIG_BIND = new KeyMapping(
-            "key.re-entity-outliner.selector", InputConstants.Type.KEYSYM,
-            GLFW.GLFW_KEY_SEMICOLON,
+            "key.re-entity-outliner.selector",
+            InputConstants.KEY_SEMICOLON,
             KEYBINDING_CATEGORY
     );
 
     public static final KeyMapping OUTLINE_BIND = new KeyMapping(
-            "key.re-entity-outliner.outline", InputConstants.Type.KEYSYM,
-            GLFW.GLFW_KEY_O,
+            "key.re-entity-outliner.outline",
+            InputConstants.KEY_O,
             KEYBINDING_CATEGORY
     );
 
